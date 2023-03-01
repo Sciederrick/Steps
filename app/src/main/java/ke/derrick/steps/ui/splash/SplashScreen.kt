@@ -12,6 +12,7 @@ import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import ke.derrick.steps.R
 import kotlinx.coroutines.delay
 
@@ -23,12 +24,20 @@ fun SplashScreen(onTimeout: () -> Unit = {}) {
         currentOnTimeout()
     }
     Box(
-        modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primary),
+        modifier = Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primary),
         contentAlignment = Alignment.Center,
     ) {
         Image(
-            painter = painterResource(id = R.drawable.steps),
+            painter = painterResource(id = R.drawable.steps_transparent),
             contentDescription = null
         )
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun PreviewSplashScreen() {
+    SplashScreen()
 }

@@ -1,0 +1,54 @@
+package ke.derrick.steps.ui.components
+
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
+import ke.derrick.steps.R
+
+@Composable
+fun TopBar() {
+    Row(verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth()) {
+        Row {
+            Icon(painter = painterResource(id = R.drawable.ic_walk_32dp),
+                contentDescription = null)
+            Text(text = "Dashboard", style = MaterialTheme.typography.headlineMedium)
+        }
+
+        Box{
+            var expanded by rememberSaveable { mutableStateOf(false) }
+            IconButton(onClick = { expanded = true }) {
+                Icon(painter = painterResource(id = R.drawable.ic_more_32dp),
+                    contentDescription = "menu options button icon")
+            }
+
+            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+                DropdownMenuItem(onClick = { /*TODO*/ }) {
+                    Icon(painter = painterResource(id = R.drawable.ic_map_location_24dp),
+                        contentDescription = "go to google maps icon")
+                    Text(text = "google maps", modifier = Modifier.padding(start = 4.dp))
+                }
+                DropdownMenuItem(onClick = { /*TODO*/ }) {
+                    Icon(painter = painterResource(id = R.drawable.ic_settings_24dp),
+                        contentDescription = "adjust settings icon")
+                    Text(text = "settings", modifier = Modifier.padding(start = 4.dp))
+                }
+            }
+        }
+
+    }
+}

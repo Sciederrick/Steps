@@ -1,5 +1,6 @@
 package ke.derrick.steps.ui.theme
 
+import androidx.compose.material3.Text
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.Font
@@ -17,6 +18,13 @@ val Rubik = FontFamily(
 )
 // Set of Material typography styles to start with
 val Typography = Typography(
+    headlineMedium = TextStyle(
+        fontFamily = Rubik,
+        fontWeight = FontWeight.Medium,
+        fontSize = 28.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
     titleLarge = TextStyle(
         fontFamily = Rubik,
         fontWeight = FontWeight.Bold,
