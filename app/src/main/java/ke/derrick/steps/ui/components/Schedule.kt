@@ -1,5 +1,6 @@
 package ke.derrick.steps.ui.components
 
+import android.app.TimePickerDialog
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +16,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -26,6 +28,7 @@ import ke.derrick.steps.ui.theme.Gray900
 import ke.derrick.steps.ui.theme.RoundedShapes
 import ke.derrick.steps.ui.theme.White
 import ke.derrick.steps.ui.utils.getDayOfTheWeek
+import ke.derrick.steps.ui.utils.getHourMinute
 import kotlin.properties.Delegates
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -34,6 +37,7 @@ fun Schedule() {
     Column(modifier = Modifier.padding(
         vertical = dimensionResource(R.dimen.section_spacing_vertical)
     )) {
+        val mContext = LocalContext.current
         Text(text = stringResource(id = R.string.section_schedule_title),
             style = MaterialTheme.typography.titleMedium,
             modifier = Modifier.padding(vertical = 16.dp))
@@ -46,6 +50,7 @@ fun Schedule() {
             var status by Delegates.notNull<Int>()
             var bgColor: Color
             var textColor: Color
+            var isScheduleCardEnabled = false
             for(dayOfTheWeek in DaysOfTheWeek.values()) {
                 status = weekStatus[dayOfTheWeek.ordinal] ?: 3 // 3 is a filler for null
                 if (ScheduleStatus.SCHEDULED.ordinal == status) {
@@ -60,8 +65,20 @@ fun Schedule() {
                 } else {
                     textColor = Gray900
                     bgColor = White
+                    isScheduleCardEnabled = true
                 }
-                Card(onClick = { /*TODO*/ },
+                val mTime = rememberSaveable { mutableStateOf("") }
+                val hourMinute = getHourMinute()
+                Card(
+                    onClick = {
+                        TimePickerDialog(
+                            mContext,
+                            {_, mHour : Int, mMinute: Int ->
+                                mTime.value = "$mHour:$mMinute"
+                            }, hourMinute.first, hourMinute.second, false
+                        ).show()
+                    },
+                    enabled = isScheduleCardEnabled,
                     backgroundColor = bgColor,
                     modifier = Modifier.padding(6.dp),
                     shape = RoundedShapes.small) {
