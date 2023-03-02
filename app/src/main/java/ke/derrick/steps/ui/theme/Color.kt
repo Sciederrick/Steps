@@ -2,6 +2,8 @@ package ke.derrick.steps.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val White = Color(0xFFFFFFFF)
+val Gray900 = Color(0xFF313131)
 
 val Purple40 = Color(0xFF6650a4)
 val Pink40 = Color(0xFF7D5260)

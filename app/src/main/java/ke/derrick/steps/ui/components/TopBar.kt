@@ -15,6 +15,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ke.derrick.steps.R
 
@@ -26,26 +27,28 @@ fun TopBar() {
         Row {
             Icon(painter = painterResource(id = R.drawable.ic_walk_32dp),
                 contentDescription = null)
-            Text(text = "Dashboard", style = MaterialTheme.typography.headlineMedium)
+            Text(text = stringResource(id = R.string.app_dashboard), style = MaterialTheme.typography.headlineMedium)
         }
 
         Box{
             var expanded by rememberSaveable { mutableStateOf(false) }
             IconButton(onClick = { expanded = true }) {
                 Icon(painter = painterResource(id = R.drawable.ic_more_32dp),
-                    contentDescription = "menu options button icon")
+                    contentDescription = stringResource(id = R.string.menu_options_button_icon))
             }
 
             DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
                 DropdownMenuItem(onClick = { /*TODO*/ }) {
                     Icon(painter = painterResource(id = R.drawable.ic_map_location_24dp),
-                        contentDescription = "go to google maps icon")
-                    Text(text = "google maps", modifier = Modifier.padding(start = 4.dp))
+                        contentDescription = stringResource(id = R.string.dropdown_menu_item_go_to_google_maps))
+                    Text(text = stringResource(id = R.string.dropdown_menu_item_google_maps_text),
+                        modifier = Modifier.padding(start = 4.dp))
                 }
                 DropdownMenuItem(onClick = { /*TODO*/ }) {
                     Icon(painter = painterResource(id = R.drawable.ic_settings_24dp),
-                        contentDescription = "adjust settings icon")
-                    Text(text = "settings", modifier = Modifier.padding(start = 4.dp))
+                        contentDescription = stringResource(id = R.string.dropdown_menu_item_adjust_settings_icon))
+                    Text(text = stringResource(id = R.string.dropdown_menu_item_settings_text),
+                        modifier = Modifier.padding(start = 4.dp))
                 }
             }
         }
