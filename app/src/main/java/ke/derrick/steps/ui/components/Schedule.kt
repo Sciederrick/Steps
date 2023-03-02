@@ -17,13 +17,14 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import ke.derrick.steps.DaysOfTheWeek
 import ke.derrick.steps.R
-import ke.derrick.steps.ScheduleStatus
+import ke.derrick.steps.WorkoutStatus
 import ke.derrick.steps.ui.theme.Gray900
 import ke.derrick.steps.ui.theme.RoundedShapes
 import ke.derrick.steps.ui.theme.White
@@ -33,7 +34,7 @@ import kotlin.properties.Delegates
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun Schedule() {
+fun Schedule(dayWithWorkoutStatus: HashMap<Int, Int>) {
     Column(modifier = Modifier.padding(
         vertical = dimensionResource(R.dimen.section_spacing_vertical)
     )) {
@@ -44,24 +45,25 @@ fun Schedule() {
         Row(modifier = Modifier
             .widthIn()
             .horizontalScroll(rememberScrollState())) {
-            val weekStatus by rememberSaveable{ mutableStateOf(hashMapOf<Int, Int>()) }
-            weekStatus[0] = 0; weekStatus[1] = 1; weekStatus[2] = 0; weekStatus[3] = 1; weekStatus[4] = 2
             val today = getDayOfTheWeek() - 1
             var status by Delegates.notNull<Int>()
             var bgColor: Color
             var textColor: Color
             var isScheduleCardEnabled = false
+            var isToday: Boolean
+
             for(dayOfTheWeek in DaysOfTheWeek.values()) {
-                status = weekStatus[dayOfTheWeek.ordinal] ?: 3 // 3 is a filler for null
-                if (ScheduleStatus.SCHEDULED.ordinal == status) {
+                isToday = today == dayOfTheWeek.ordinal
+                status = dayWithWorkoutStatus[dayOfTheWeek.ordinal] ?: 4 // 4 is a filler for null
+                if (isToday && status != WorkoutStatus.DONE.ordinal) {
                     textColor = White
-                    bgColor = ScheduleStatus.SCHEDULED.color
-                } else if (ScheduleStatus.DONE.ordinal == status) {
+                    bgColor = WorkoutStatus.PENDING.color
+                } else if (WorkoutStatus.DONE.ordinal == status) {
                     textColor = White
-                    bgColor = ScheduleStatus.DONE.color
-                } else if (ScheduleStatus.MISSED.ordinal == status) {
+                    bgColor = WorkoutStatus.DONE.color
+                } else if (WorkoutStatus.MISSED.ordinal == status) {
                     textColor = White
-                    bgColor = ScheduleStatus.MISSED.color
+                    bgColor = WorkoutStatus.MISSED.color
                 } else {
                     textColor = Gray900
                     bgColor = White
@@ -80,7 +82,7 @@ fun Schedule() {
                     },
                     enabled = isScheduleCardEnabled,
                     backgroundColor = bgColor,
-                    modifier = Modifier.padding(6.dp),
+                    modifier = Modifier.padding(6.dp).testTag("ScheduleCard"),
                     shape = RoundedShapes.small) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
@@ -89,7 +91,7 @@ fun Schedule() {
                         Text(text = dayOfTheWeek.shortName, color = textColor)
                         Spacer(modifier = Modifier.size(14.dp))
 
-                        if (today >= dayOfTheWeek.ordinal) {
+                        if (today > dayOfTheWeek.ordinal) {
                             when(status) { // DAY OF THE WEEK
                                 0 -> { // DONE
                                     Icon(painter = painterResource(id = R.drawable.ic_checkmark_circle_16dp),
@@ -103,19 +105,27 @@ fun Schedule() {
                                         tint = White
                                     )
                                 }
-                                2 -> { // SCHEDULED
-                                    Icon(painter = painterResource(id = R.drawable.ic_time_clock_16dp),
-                                        contentDescription = stringResource(id = R.string.label_scheduled_exercise),
-                                        tint = White
-                                    )
-                                }
                             }
-                        } else { // future date (day)
-                            Icon(painter = painterResource(id = R.drawable.ic_dot_16dp),
-                                contentDescription =
-                                stringResource(id = R.string.label_future_exercise),
-                                tint = MaterialTheme.colorScheme.tertiary
+                        } else if (isToday) {
+                            Icon(painter = painterResource(id = R.drawable.ic_time_clock_16dp),
+                                contentDescription = stringResource(id = R.string.label_scheduled_exercise),
+                                tint = White
                             )
+                        } else { // future date (day)
+                            if (status == WorkoutStatus.SCHEDULED.ordinal ) { // SCHEDULED
+                                Icon(painter = painterResource(id = R.drawable.ic_alarm_16dp),
+                                    contentDescription =
+                                    stringResource(id = R.string.label_scheduled_exercise),
+                                    tint = MaterialTheme.colorScheme.tertiary
+                                )
+                            } else {
+                                Icon(painter = painterResource(id = R.drawable.ic_dot_16dp),
+                                    contentDescription =
+                                    stringResource(id = R.string.label_future_exercise),
+                                    tint = MaterialTheme.colorScheme.tertiary
+                                )
+                            }
+
                         }
 
 

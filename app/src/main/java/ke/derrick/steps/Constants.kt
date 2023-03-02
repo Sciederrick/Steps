@@ -4,7 +4,7 @@ import androidx.compose.ui.graphics.Color
 import ke.derrick.steps.ui.theme.Blue800
 import ke.derrick.steps.ui.theme.Green400
 import ke.derrick.steps.ui.theme.Pink700
-import ke.derrick.steps.ui.theme.Purple40
+import ke.derrick.steps.ui.theme.White
 
 enum class DaysOfTheWeek(val shortName: String) {
     SUNDAY("Sun"), MONDAY("Mon"), TUESDAY("Tue"),
@@ -12,6 +12,6 @@ enum class DaysOfTheWeek(val shortName: String) {
     SATURDAY("Sat")
 }
 
-enum class ScheduleStatus(val color: Color) {
-    DONE(Green400), MISSED(Pink700), SCHEDULED(Blue800)
+enum class WorkoutStatus(val color: Color) {
+    DONE(Green400), MISSED(Pink700), PENDING(Blue800), SCHEDULED(White)
 }

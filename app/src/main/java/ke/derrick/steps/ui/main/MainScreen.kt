@@ -5,6 +5,9 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -20,7 +23,10 @@ fun MainScreen() {
         Column(modifier = Modifier
             .padding(paddingValues = it)
             .verticalScroll(rememberScrollState())) {
-            Schedule()
+            val dayWithWorkoutStatus by rememberSaveable{ mutableStateOf(hashMapOf<Int, Int>()) }
+            dayWithWorkoutStatus[0] = 0; dayWithWorkoutStatus[1] = 1; dayWithWorkoutStatus[2] = 0; dayWithWorkoutStatus[3] = 1;
+            dayWithWorkoutStatus[4] = 2; dayWithWorkoutStatus[5] = 3
+            Schedule(dayWithWorkoutStatus)
         }
 
     }
