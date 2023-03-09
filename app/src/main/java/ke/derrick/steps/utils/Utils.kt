@@ -1,0 +1,15 @@
+package ke.derrick.steps.utils
+
+import java.time.LocalTime
+import java.util.*
+
+
+fun getDayOfTheWeek(): Int {
+    val c = Calendar.getInstance()
+    c.time = Date()
+    return c.get(Calendar.DAY_OF_WEEK) // starting from 1
+}
+
+fun getCurrentHourMinute() =
+    Pair(LocalTime.now().hour, LocalTime.now().minute)
+
