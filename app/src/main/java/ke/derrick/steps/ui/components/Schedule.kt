@@ -79,13 +79,13 @@ fun Schedule(dayWithWorkoutStatus: Array<Int>, onSchedule: (Int) -> Unit = {}) {
 fun DisplayIcon(dayOfTheWeek: DaysOfTheWeek, today: Int, status: Int) {
     if (today > dayOfTheWeek.ordinal) {
         when(status) { // DAY OF THE WEEK
-            0 -> { // DONE
+            WorkoutStatus.DONE.ordinal -> { // DONE
                 Icon(painter = painterResource(id = R.drawable.ic_checkmark_circle_16dp),
                     contentDescription = stringResource(id = R.string.label_completed_exercise),
                     tint = White
                 )
             }
-            1 -> { // MISSED
+            WorkoutStatus.MISSED.ordinal -> { // MISSED
                 Icon(painter = painterResource(id = R.drawable.ic_times_circle_16dp),
                     contentDescription = stringResource(id = R.string.label_missed_exercise),
                     tint = White
@@ -93,23 +93,38 @@ fun DisplayIcon(dayOfTheWeek: DaysOfTheWeek, today: Int, status: Int) {
             }
         }
     } else if (today == dayOfTheWeek.ordinal) {
-        Icon(painter = painterResource(id = R.drawable.ic_time_clock_16dp),
-            contentDescription = stringResource(id = R.string.label_scheduled_exercise),
-            tint = White
-        )
+        when(status) {
+            WorkoutStatus.SCHEDULED.ordinal -> { // SCHEDULED
+                Icon(painter = painterResource(id = R.drawable.ic_alarm_16dp),
+                    contentDescription =
+                    stringResource(id = R.string.label_scheduled_exercise),
+                    tint = MaterialTheme.colorScheme.tertiary
+                )
+            }
+            else -> {
+                Icon(painter = painterResource(id = R.drawable.ic_time_clock_16dp),
+                    contentDescription = stringResource(id = R.string.label_scheduled_exercise),
+                    tint = White
+                )
+            }
+        }
+
     } else { // future date (day)
-        if (status == WorkoutStatus.SCHEDULED.ordinal ) { // SCHEDULED
-            Icon(painter = painterResource(id = R.drawable.ic_alarm_16dp),
-                contentDescription =
-                stringResource(id = R.string.label_scheduled_exercise),
-                tint = MaterialTheme.colorScheme.tertiary
-            )
-        } else {
-            Icon(painter = painterResource(id = R.drawable.ic_dot_16dp),
-                contentDescription =
-                stringResource(id = R.string.label_future_exercise),
-                tint = MaterialTheme.colorScheme.tertiary
-            )
+        when(status) {
+            WorkoutStatus.SCHEDULED.ordinal -> {
+                Icon(painter = painterResource(id = R.drawable.ic_alarm_16dp),
+                    contentDescription =
+                    stringResource(id = R.string.label_scheduled_exercise),
+                    tint = MaterialTheme.colorScheme.tertiary
+                )
+            }
+            else -> {
+                Icon(painter = painterResource(id = R.drawable.ic_dot_16dp),
+                    contentDescription =
+                    stringResource(id = R.string.label_future_exercise),
+                    tint = MaterialTheme.colorScheme.tertiary
+                )
+            }
         }
 
     }
