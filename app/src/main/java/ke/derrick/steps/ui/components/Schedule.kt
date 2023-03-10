@@ -1,6 +1,5 @@
 package ke.derrick.steps.ui.components
 
-import android.util.Log
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState

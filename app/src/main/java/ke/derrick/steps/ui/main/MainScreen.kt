@@ -39,7 +39,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
                 TimePickerDialog(
                     mContext,
                     {_, mHour : Int, mMinute: Int ->
-                        viewModel.createScheduleReminder(dayOfTheWeek, mHour, mMinute)
+                        viewModel.createScheduleReminder(mContext, dayOfTheWeek, mHour, mMinute)
                     }, hourMinute.first, hourMinute.second, false
                 ).show()
                 dayWithWorkoutStatus[dayOfTheWeek] = WorkoutStatus.SCHEDULED.ordinal

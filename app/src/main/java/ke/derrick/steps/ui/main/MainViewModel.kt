@@ -1,5 +1,6 @@
 package ke.derrick.steps.ui.main
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -13,8 +14,8 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(private val repo: Repository,
                     private val createScheduleUseCase: CreateScheduleUseCase): ViewModel() {
-    fun createScheduleReminder(dayOfTheWeek: Int, mHour: Int, mMinute: Int) = viewModelScope.launch {
-        createScheduleUseCase(dayOfTheWeek, mHour, mMinute)
+    fun createScheduleReminder(mContext: Context, dayOfTheWeek: Int, mHour: Int, mMinute: Int) = viewModelScope.launch {
+        createScheduleUseCase(mContext, dayOfTheWeek, mHour, mMinute)
         repo.persistSchedule(dayOfTheWeek)
     }
 
