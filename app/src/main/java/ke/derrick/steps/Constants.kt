@@ -15,3 +15,5 @@ enum class DaysOfTheWeek(val shortName: String) {
 enum class WorkoutStatus(val color: Color) {
     DONE(Green400), MISSED(Pink700), PENDING(Blue800), SCHEDULED(White)
 }
+
+const val CHANNEL_ID = ""

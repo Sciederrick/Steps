@@ -8,7 +8,8 @@
     <string name="dropdown_menu_item_settings_text">settings</string>
     <string name="section_schedule_title">SCHEDULE</string>
     <string name="label_completed_exercise">completed exercise icon</string>
-    <string name="label_missed_exercise">mixed exercise icon</string>
+    <string name="label_missed_exercise">missed exercise icon</string>
     <string name="label_scheduled_exercise">scheduled exercise icon</string>
     <string name="label_future_exercise">future exercise icon</string>
+    <string name="notification_title">Schedule</string>
 </resources>

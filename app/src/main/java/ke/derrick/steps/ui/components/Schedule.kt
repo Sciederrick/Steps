@@ -84,7 +84,7 @@ fun DisplayIcon(dayOfTheWeek: DaysOfTheWeek, today: Int, status: Int) {
                     tint = White
                 )
             }
-            WorkoutStatus.MISSED.ordinal -> { // MISSED
+            else -> { // MISSED
                 Icon(painter = painterResource(id = R.drawable.ic_times_circle_16dp),
                     contentDescription = stringResource(id = R.string.label_missed_exercise),
                     tint = White
@@ -136,12 +136,12 @@ fun initializeComponentColors(dayOfTheWeek: DaysOfTheWeek, today: Int, status: I
 
     if (dayOfTheWeek.ordinal < today) { // The past
         textColor = White
-        when (status) {
-            WorkoutStatus.MISSED.ordinal -> {
-                bgColor = WorkoutStatus.MISSED.color
-            }
+        bgColor = when (status) {
             WorkoutStatus.DONE.ordinal -> {
-                bgColor = WorkoutStatus.DONE.color
+                WorkoutStatus.DONE.color
+            }
+            else -> {
+                WorkoutStatus.MISSED.color
             }
         }
     } else if (dayOfTheWeek.ordinal == today) { // today
