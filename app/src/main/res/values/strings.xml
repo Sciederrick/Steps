@@ -11,5 +11,7 @@
     <string name="label_missed_exercise">missed exercise icon</string>
     <string name="label_scheduled_exercise">scheduled exercise icon</string>
     <string name="label_future_exercise">future exercise icon</string>
-    <string name="notification_title">Schedule</string>
+    <string name="notif_title">Schedule</string>
+    <string name="notif_schedule_channel_name">When its time for your scheduled workout</string>
+    <string name="notif_action_snooze_30">Snooze 30 min</string>
 </resources>

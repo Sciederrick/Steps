@@ -16,4 +16,7 @@ enum class WorkoutStatus(val color: Color) {
     DONE(Green400), MISSED(Pink700), PENDING(Blue800), SCHEDULED(White)
 }
 
-const val CHANNEL_ID = ""
+const val SCHEDULE_NOTIF_CHANNEL_ID = "STEPS_01"
+const val SCHEDULE_NOTIF_ID = 1
+const val EXTRA_SCHEDULE_NOTIF_TIME = "ke.derrick.steps.SCHEDULED_TIME"
+const val BROADCAST_REQUEST_CODE = 12345

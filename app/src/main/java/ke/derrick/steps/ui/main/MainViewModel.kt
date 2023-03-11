@@ -7,15 +7,15 @@ import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import ke.derrick.steps.StepsApplication
 import ke.derrick.steps.data.repository.Repository
-import ke.derrick.steps.domain.CreateScheduleUseCase
+import ke.derrick.steps.domain.CreateWorkoutReminderUseCase
 import kotlinx.coroutines.Deferred
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 class MainViewModel(private val repo: Repository,
-                    private val createScheduleUseCase: CreateScheduleUseCase): ViewModel() {
+                    private val createWorkoutReminder: CreateWorkoutReminderUseCase): ViewModel() {
     fun createScheduleReminder(mContext: Context, dayOfTheWeek: Int, mHour: Int, mMinute: Int) = viewModelScope.launch {
-        createScheduleUseCase(mContext, dayOfTheWeek, mHour, mMinute)
+        createWorkoutReminder(mContext, dayOfTheWeek, mHour, mMinute)
         repo.persistSchedule(dayOfTheWeek)
     }
 
@@ -33,7 +33,7 @@ class MainViewModel(private val repo: Repository,
             ): T {
                 val application = checkNotNull(extras[APPLICATION_KEY])
                 return MainViewModel((application as StepsApplication).repo, 
-                    createScheduleUseCase = CreateScheduleUseCase()) as T
+                    createWorkoutReminder = CreateWorkoutReminderUseCase()) as T
             }
         }
     }

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <application
         android:name=".StepsApplication"
         android:allowBackup="true"
@@ -28,7 +29,9 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-        <receiver android:name=".receiver.ScheduleReceiver" >
+        <receiver android:name=".receiver.CreateWorkoutNotificationReceiver">
+        </receiver>
+        <receiver android:name=".receiver.SnoozeWorkoutNotificationReceiver">
         </receiver>
     </application>
 
