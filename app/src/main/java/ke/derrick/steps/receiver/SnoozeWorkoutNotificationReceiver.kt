@@ -13,8 +13,8 @@ class SnoozeWorkoutNotificationReceiver(): BroadcastReceiver() {
     override fun onReceive(p0: Context?, p1: Intent?) {
         if (p0 != null && p1 != null) {
             snoozeWorkoutReminderUseCase(p0,
-                p1.getStringExtra(EXTRA_SCHEDULE_NOTIF_TIME) ?: "",
-                1 * 60 * 1000)
+                p1.getStringExtra(EXTRA_SCHEDULE_NOTIF_TIME) ?: "Snoozed",
+                30 * 60 * 1000)
             cancelNotification(p0, SCHEDULE_NOTIF_ID)
         }
     }

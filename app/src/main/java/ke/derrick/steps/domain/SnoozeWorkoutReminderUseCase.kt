@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.Intent
 import androidx.core.app.AlarmManagerCompat
 import ke.derrick.steps.BROADCAST_REQUEST_CODE
-import ke.derrick.steps.DaysOfTheWeek
 import ke.derrick.steps.EXTRA_SCHEDULE_NOTIF_TIME
 import ke.derrick.steps.receiver.CreateWorkoutNotificationReceiver
 
