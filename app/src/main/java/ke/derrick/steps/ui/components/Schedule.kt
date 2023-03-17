@@ -24,18 +24,17 @@ import ke.derrick.steps.ui.theme.Gray900
 import ke.derrick.steps.ui.theme.RoundedShapes
 import ke.derrick.steps.ui.theme.White
 import ke.derrick.steps.utils.getDayOfTheWeek
-import kotlin.properties.Delegates
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 fun Schedule(dayWithWorkoutStatus: Array<Int>, onSchedule: (Int) -> Unit = {}) {
     Column(modifier = Modifier.padding(
-        vertical = dimensionResource(R.dimen.section_spacing_vertical)
+        vertical = dimensionResource(R.dimen.spacing_md)
     )) {
 
         Text(text = stringResource(id = R.string.section_schedule_title),
             style = MaterialTheme.typography.titleMedium,
-            modifier = Modifier.padding(vertical = 16.dp))
+            modifier = Modifier.padding(vertical = dimensionResource(R.dimen.spacing_md)))
         Row(modifier = Modifier
             .widthIn()
             .horizontalScroll(rememberScrollState())) {
@@ -53,7 +52,9 @@ fun Schedule(dayWithWorkoutStatus: Array<Int>, onSchedule: (Int) -> Unit = {}) {
                     onClick = { onSchedule(dayOfTheWeek.ordinal) },
                     enabled = isScheduleCardEnabled,
                     backgroundColor = bgColor,
-                    modifier = Modifier.padding(6.dp).testTag("ScheduleCard"),
+                    modifier = Modifier
+                        .padding(6.dp)
+                        .testTag("ScheduleCard"),
                     shape = RoundedShapes.small) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier

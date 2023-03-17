@@ -4,44 +4,57 @@ import android.graphics.Paint
 import android.graphics.PointF
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
-import androidx.compose.ui.graphics.drawscope.DrawStyle
 import androidx.compose.ui.graphics.drawscope.Stroke
-import androidx.compose.ui.graphics.vector.VectorProperty
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.content.ContextCompat
+import ke.derrick.steps.R
 import ke.derrick.steps.ui.theme.Blue800
+import ke.derrick.steps.utils.convertToTwoDigitNumberString
 
 /**
  * Created by Saurabh
  */
 @Composable
-fun Graph(
+fun StepsGraph(
     modifier : Modifier,
     xValues: List<Int>,
     yValues: List<Int>,
     points: List<Float>,
-    paddingSpace: Dp,
+    midpoint: Int = 3,
     verticalStep: Int
 ) {
+    val mContext = LocalContext.current
     val controlPoints1 = mutableListOf<PointF>()
     val controlPoints2 = mutableListOf<PointF>()
     val coordinates = mutableListOf<PointF>()
     val density = LocalDensity.current
     val textPaint = remember(density) {
         Paint().apply {
-            color = android.graphics.Color.BLACK
+            isFakeBoldText = true
+            color = ContextCompat.getColor(mContext, R.color.gray_600)
+            textAlign = Paint.Align.CENTER
+            textSize = density.run { 12.sp.toPx() }
+        }
+    }
+    val textPaintOnFocus = remember(density) {
+        Paint().apply {
+            isFakeBoldText = true
+            color = ContextCompat.getColor(mContext, R.color.blue_800)
             textAlign = Paint.Align.CENTER
             textSize = density.run { 12.sp.toPx() }
         }
@@ -50,21 +63,38 @@ fun Graph(
     Box(
         modifier = modifier
             .background(MaterialTheme.colorScheme.background)
-            .padding(horizontal = 8.dp, vertical = 12.dp),
+            .padding(horizontal = 8.dp, vertical = 12.dp)
+            .fillMaxSize()
+            .graphicsLayer { alpha = 0.99F }
+            .drawWithContent {
+                val colors = listOf(Color.Transparent, Color.White)
+                drawContent()
+                drawRect(
+                    brush = Brush.horizontalGradient(startX = 0f, endX = (size.width/3f),
+                        colors = colors),
+                    blendMode = BlendMode.DstIn
+                )
+                drawRect(
+                    brush = Brush.horizontalGradient(startX = size.width,
+                        endX = size.width - (size.width/3f), colors = colors),
+                    blendMode = BlendMode.DstIn
+                )
+            },
         contentAlignment = Center
     ) {
         Canvas(
-            modifier = Modifier.fillMaxSize(),
-        ) {
-            val xAxisSpace = size.width / xValues.size // Fill the whole width of the screen
+            modifier = Modifier
+                .fillMaxSize()
+         ) {
+            val xAxisSpace = size.width / (xValues.size - 1)
             val yAxisSpace = size.height / yValues.size
-            /** placing x axis points */
+            /** placing x axis labels **/
             for (i in xValues.indices) {
                 drawContext.canvas.nativeCanvas.drawText(
-                    "${xValues[i]}",
+                    convertToTwoDigitNumberString(xValues[i]),
                     xAxisSpace * i,
                     size.height - 30,
-                    textPaint
+                    if (i == midpoint) textPaintOnFocus else textPaint
                 )
             }
 
@@ -101,21 +131,18 @@ fun Graph(
                 )
             )
 
-            /** drawing a circle for one point of focus */
-//            for ((index, coordinate) in coordinates.withIndex()) {
-                drawCircle(
-                    color = Blue800,
-                    radius = 30f,
-                    center = Offset(coordinates[5].x, coordinates[5].y)
-//                    center = Offset(coordinate.x, coordinate.y)
-                )
-                drawCircle(
-                    color = Color.White,
-                    radius = 18f,
-                    center = Offset(coordinates[5].x, coordinates[5].y)
-//                    center = Offset(coordinate.x, coordinate.y)
-                )
-//            }
+            /** drawing a circle for one point of focus **/
+            // TODO: use a dynamic index to draw a hollow circle on the focused coordinate
+            drawCircle(
+                color = Blue800,
+                radius = 30f,
+                center = Offset(coordinates[midpoint].x, coordinates[midpoint].y)
+            )
+            drawCircle(
+                color = Color.White,
+                radius = 18f,
+                center = Offset(coordinates[midpoint].x, coordinates[midpoint].y)
+            )
         }
     }
 }

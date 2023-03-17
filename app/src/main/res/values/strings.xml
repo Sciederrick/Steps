@@ -14,4 +14,6 @@
     <string name="notif_title">Schedule</string>
     <string name="notif_schedule_channel_name">When its time for your scheduled workout</string>
     <string name="notif_action_snooze_30">Snooze 30 min</string>
+    <string name="dropdown_menu_item_this_week">this week</string>
+    <string name="dropdown_menu_item_last_week">last week</string>
 </resources>

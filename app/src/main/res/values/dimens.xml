@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <dimen name="section_spacing_vertical">16.dp</dimen>
+    <dimen name="spacing_sm">8.dp</dimen>
+    <dimen name="spacing_md">16.dp</dimen>
 </resources>

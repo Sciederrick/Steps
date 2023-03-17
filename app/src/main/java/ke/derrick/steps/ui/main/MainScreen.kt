@@ -2,22 +2,27 @@ package ke.derrick.steps.ui.main
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.dimensionResource
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ke.derrick.steps.R
 import ke.derrick.steps.WorkoutStatus
-import ke.derrick.steps.ui.components.Graph
+import ke.derrick.steps.ui.components.StepsGraph
 import ke.derrick.steps.ui.components.Schedule
+import ke.derrick.steps.ui.components.StepsGraphHeader
 import ke.derrick.steps.ui.components.TopBar
 import ke.derrick.steps.utils.getCurrentHourMinute
 import kotlin.random.Random
@@ -50,31 +55,21 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
             }
 
             val yStep = 50
-            val random = Random
-            /* to test with random points */
-//            val points = (0..9).map {
-//                var num = random.nextInt(350)
-//                if (num <= 50)
-//                    num += 100
-//                num.toFloat()
-//            }
-
-
-            /* to test with fixed points */
-            val points = listOf(150f,100f,250f,200f,330f,300f,90f,120f,285f,199f)
-            Box(
+            val points = listOf(150f,100f,250f,200f,330f,300f,90f)
+            Column(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.DarkGray)
+                    .padding(vertical = dimensionResource(id = R.dimen.spacing_md))
             ) {
-                Graph(
+                StepsGraphHeader()
+                StepsGraph(
                     modifier = Modifier
                         .fillMaxWidth()
                         .height(500.dp),
-                    xValues = (0..9).map { x -> x + 1 },
+                    xValues = (0..6).map { x -> x + 1 },
                     yValues = (0..6).map { y -> (y + 1) * yStep },
                     points = points,
-                    paddingSpace = 16.dp,
+                    midpoint = 3,
                     verticalStep = yStep
                 )
             }
@@ -87,18 +82,16 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
 @Preview(showBackground = true)
 @Composable
 fun PreviewMainScreen() {
-    val yStep = 50
-    val random = Random
+    val yStep = 100
     /* to test with fixed points */
     val points = listOf(150f,100f,250f,200f,330f,300f,90f,120f,285f,199f)
-    Graph(
+    StepsGraph(
         modifier = Modifier
             .fillMaxWidth()
             .height(500.dp),
         xValues = (0..9).map { x -> x + 1 },
         yValues = (0..6).map { y -> (y + 1) * yStep },
         points = points,
-        paddingSpace = 16.dp,
         verticalStep = yStep
     )
 }
