@@ -55,13 +55,6 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
                 dayWithWorkoutStatus[dayOfTheWeek] = WorkoutStatus.SCHEDULED.ordinal
             }
 
-//            val cachedXValues = (0..50).map { num ->
-//                if (num > 31) {
-//                    num - 31
-//                } else {
-//                    num
-//                }
-//            }
             val cachedPoints = (0..50).map { n ->
                 var num = Random.nextInt(350)
                 if (num <= 50)
@@ -87,14 +80,14 @@ fun GraphSection(cachedPoints: List<Pair<Float, Int>>) {
             .padding(vertical = dimensionResource(id = R.dimen.spacing_md))
     ) {
         val yStep = 50
+        val midpoint = 3
 
         var start by remember { mutableStateOf(cachedPoints.size - 7) }
-//        val xValues by remember(start) { mutableStateOf(cachedXValues.subList(start, start + 6)) }
         val points by remember(start) { mutableStateOf(cachedPoints.subList(start, start + 7)) }
 
 
         Log.d("MainScreen", "recomposition")
-        StepsGraphHeader()
+        StepsGraphHeader(points[3].first.toInt())
         StepsGraph(
             modifier = Modifier
                 .fillMaxWidth()
@@ -103,7 +96,7 @@ fun GraphSection(cachedPoints: List<Pair<Float, Int>>) {
             xValues = (0..6).map { x -> x + 1 },
             yValues = (0..6).map { y -> (y + 1) * yStep },
             points = points.map { pair -> pair.first},
-            midpoint = 3,
+            midpoint = midpoint,
             verticalStep = yStep
         ) { offset ->
             if (start - offset < 0)

@@ -22,7 +22,7 @@ import ke.derrick.steps.R
 import ke.derrick.steps.ui.theme.RoundedShapes
 
 @Composable
-fun StepsGraphHeader() {
+fun StepsGraphHeader(numSteps: Int = 0) {
     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(
             dimensionResource(id = R.dimen.spacing_md))) {
@@ -34,7 +34,7 @@ fun StepsGraphHeader() {
                     tint = MaterialTheme.colorScheme.secondary)
             }
             Column {
-                Text(text = "1250", style = MaterialTheme.typography.headlineSmall)
+                Text(text = numSteps.toString(), style = MaterialTheme.typography.headlineSmall)
                 Text(text = "STEPS", style = MaterialTheme.typography.labelLarge,
                     modifier = Modifier.padding(start = 4.dp))
             }
