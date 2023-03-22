@@ -61,8 +61,6 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
                     num += 100
                  Pair(num.toFloat(), if (n > 31) n -31 else n)
             }
-            Log.d("MainScreen", "$cachedPoints")
-            Log.d("MainScreen", "upper recomposition")
 
             GraphSection(cachedPoints = cachedPoints)
 
@@ -81,28 +79,28 @@ fun GraphSection(cachedPoints: List<Pair<Float, Int>>) {
     ) {
         val yStep = 50
         val midpoint = 3
+        val numPoints = 7
+        val numY = 7
 
-        var start by remember { mutableStateOf(cachedPoints.size - 7) }
-        val points by remember(start) { mutableStateOf(cachedPoints.subList(start, start + 7)) }
+        var start by remember { mutableStateOf(cachedPoints.size - numPoints) }
+        val points by remember(start) { mutableStateOf(cachedPoints.subList(start, start + numPoints)) }
 
-
-        Log.d("MainScreen", "recomposition")
         StepsGraphHeader(points[3].first.toInt())
         StepsGraph(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(500.dp),
+                .height(350.dp),
             xLabels = points.map { pair -> pair.second },
-            xValues = (0..6).map { x -> x + 1 },
-            yValues = (0..6).map { y -> (y + 1) * yStep },
+            xValues = (0 until numPoints).map { x -> x + 1 },
+            yValues = (0 until numY).map { y -> (y + 1) * yStep },
             points = points.map { pair -> pair.first},
             midpoint = midpoint,
             verticalStep = yStep
         ) { offset ->
             if (start - offset < 0)
                 start = 0
-            else if (start - offset > cachedPoints.size - 7)
-                start = cachedPoints.size - 7
+            else if (start - offset > cachedPoints.size - numPoints)
+                start = cachedPoints.size - numPoints
             else
                 start -= offset
             Log.d("MainScreen", "start: $start")
