@@ -2,8 +2,10 @@ package ke.derrick.steps.ui.components
 
 import android.graphics.Paint
 import android.graphics.PointF
+import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -15,6 +17,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.colorResource
@@ -25,6 +28,8 @@ import androidx.core.content.ContextCompat
 import ke.derrick.steps.R
 import ke.derrick.steps.ui.theme.Blue800
 import ke.derrick.steps.utils.convertToTwoDigitNumberString
+import kotlin.math.abs
+import kotlin.math.round
 
 /**
  * Created by Saurabh
@@ -32,11 +37,13 @@ import ke.derrick.steps.utils.convertToTwoDigitNumberString
 @Composable
 fun StepsGraph(
     modifier : Modifier,
+    xLabels: List<Int>,
     xValues: List<Int>,
     yValues: List<Int>,
     points: List<Float>,
     midpoint: Int = 3,
-    verticalStep: Int
+    verticalStep: Int,
+    onScroll: (Int) -> Unit
 ) {
     val mContext = LocalContext.current
     val controlPoints1 = mutableListOf<PointF>()
@@ -85,13 +92,21 @@ fun StepsGraph(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
+                .pointerInput(Unit) {
+                    detectHorizontalDragGestures { _, dragAmount ->
+                        // convert dragAmount to x offset
+                        var offset = dragAmount / (size.width / (xValues.size - 1))
+                        offset = round(offset * 5)
+                        onScroll(offset.toInt())
+                    }
+                }
          ) {
             val xAxisSpace = size.width / (xValues.size - 1)
             val yAxisSpace = size.height / yValues.size
             /** placing x axis labels **/
             for (i in xValues.indices) {
                 drawContext.canvas.nativeCanvas.drawText(
-                    convertToTwoDigitNumberString(xValues[i]),
+                    convertToTwoDigitNumberString(xLabels[i]),
                     xAxisSpace * i,
                     size.height - 30,
                     if (i == midpoint) textPaintOnFocus else textPaint

@@ -2,6 +2,7 @@ package ke.derrick.steps.ui.main
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -39,7 +40,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
             .padding(paddingValues = it)
             .verticalScroll(rememberScrollState())) {
             var dayWithWorkoutStatus by rememberSaveable{ mutableStateOf<Array<Int>>(emptyArray()) }
-            LaunchedEffect(dayWithWorkoutStatus) {
+            LaunchedEffect(true) {
                 dayWithWorkoutStatus = viewModel.getSevenDayWorkoutStatusAsync().await()
             }
 
@@ -54,45 +55,67 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
                 dayWithWorkoutStatus[dayOfTheWeek] = WorkoutStatus.SCHEDULED.ordinal
             }
 
-            val yStep = 50
-            val points = listOf(150f,100f,250f,200f,330f,300f,90f)
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(vertical = dimensionResource(id = R.dimen.spacing_md))
-            ) {
-                StepsGraphHeader()
-                StepsGraph(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(500.dp),
-                    xValues = (0..6).map { x -> x + 1 },
-                    yValues = (0..6).map { y -> (y + 1) * yStep },
-                    points = points,
-                    midpoint = 3,
-                    verticalStep = yStep
-                )
+//            val cachedXValues = (0..50).map { num ->
+//                if (num > 31) {
+//                    num - 31
+//                } else {
+//                    num
+//                }
+//            }
+            val cachedPoints = (0..50).map { n ->
+                var num = Random.nextInt(350)
+                if (num <= 50)
+                    num += 100
+                 Pair(num.toFloat(), if (n > 31) n -31 else n)
             }
+            Log.d("MainScreen", "$cachedPoints")
+            Log.d("MainScreen", "upper recomposition")
+
+            GraphSection(cachedPoints = cachedPoints)
+
         }
 
     }
 
 }
 
-@Preview(showBackground = true)
 @Composable
-fun PreviewMainScreen() {
-    val yStep = 100
-    /* to test with fixed points */
-    val points = listOf(150f,100f,250f,200f,330f,300f,90f,120f,285f,199f)
-    StepsGraph(
+fun GraphSection(cachedPoints: List<Pair<Float, Int>>) {
+    Column(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(500.dp),
-        xValues = (0..9).map { x -> x + 1 },
-        yValues = (0..6).map { y -> (y + 1) * yStep },
-        points = points,
-        verticalStep = yStep
-    )
+            .fillMaxSize()
+            .padding(vertical = dimensionResource(id = R.dimen.spacing_md))
+    ) {
+        val yStep = 50
+
+        var start by remember { mutableStateOf(cachedPoints.size - 7) }
+//        val xValues by remember(start) { mutableStateOf(cachedXValues.subList(start, start + 6)) }
+        val points by remember(start) { mutableStateOf(cachedPoints.subList(start, start + 7)) }
+
+
+        Log.d("MainScreen", "recomposition")
+        StepsGraphHeader()
+        StepsGraph(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(500.dp),
+            xLabels = points.map { pair -> pair.second },
+            xValues = (0..6).map { x -> x + 1 },
+            yValues = (0..6).map { y -> (y + 1) * yStep },
+            points = points.map { pair -> pair.first},
+            midpoint = 3,
+            verticalStep = yStep
+        ) { offset ->
+            if (start - offset < 0)
+                start = 0
+            else if (start - offset > cachedPoints.size - 7)
+                start = cachedPoints.size - 7
+            else
+                start -= offset
+            Log.d("MainScreen", "start: $start")
+        }
+    }
 }
+
+
 
