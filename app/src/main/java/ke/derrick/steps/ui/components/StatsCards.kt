@@ -10,10 +10,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.BlendMode
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.dimensionResource
@@ -44,7 +40,7 @@ fun StatsCards() {
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(painter = painterResource(id = R.drawable.ic_burn_32dp),
-                            contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
                         Column(modifier = Modifier.padding(8.dp)) {
                             Text(text = "Calories", style = MaterialTheme.typography.labelSmall)
                             Text(text = "Burnt", style = MaterialTheme.typography.labelSmall)
@@ -81,7 +77,7 @@ fun StatsCards() {
                 ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Icon(painter = painterResource(id = R.drawable.ic_walk_32dp),
-                            contentDescription = null, tint = MaterialTheme.colorScheme.primary)
+                            contentDescription = null, tint = MaterialTheme.colorScheme.secondary)
                         Column(modifier = Modifier.padding(8.dp)) {
                             Text(text = "Distance", style = MaterialTheme.typography.labelSmall)
                             Text(text = "Covered", style = MaterialTheme.typography.labelSmall)

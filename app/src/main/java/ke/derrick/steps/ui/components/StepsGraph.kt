@@ -92,6 +92,7 @@ fun StepsGraph(
         Canvas(
             modifier = Modifier
                 .fillMaxSize()
+                .padding(top = 20.dp)
                 .pointerInput(Unit) {
                     detectHorizontalDragGestures { _, dragAmount ->
                         // convert dragAmount to x offset

@@ -1,5 +1,6 @@
 package ke.derrick.steps.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
@@ -37,7 +38,8 @@ fun TopBar() {
                     contentDescription = stringResource(id = R.string.menu_options_button_icon))
             }
 
-            DropdownMenu(expanded = expanded, onDismissRequest = { expanded = false }) {
+            DropdownMenu(modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                expanded = expanded, onDismissRequest = { expanded = false }) {
                 DropdownMenuItem(onClick = { /*TODO*/ }) {
                     Icon(painter = painterResource(id = R.drawable.ic_map_location_24dp),
                         contentDescription = stringResource(id = R.string.dropdown_menu_item_go_to_google_maps))

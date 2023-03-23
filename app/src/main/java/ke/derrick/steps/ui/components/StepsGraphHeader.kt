@@ -1,5 +1,6 @@
 package ke.derrick.steps.ui.components
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.DropdownMenu
@@ -50,7 +51,8 @@ fun StepsGraphHeader(numSteps: Int = 0) {
                     contentDescription = null)
             }
 
-            DropdownMenu(expanded = expanded,
+            DropdownMenu(modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                expanded = expanded,
                 offset = DpOffset(x=8.dp, y=8.dp),
                 onDismissRequest = { expanded = false }) {
                 DropdownMenuItem(onClick = { /*TODO*/ }) {
