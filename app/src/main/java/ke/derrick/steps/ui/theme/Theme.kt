@@ -33,8 +33,7 @@ private val LightColorScheme = lightColorScheme(
 @Composable
 fun StepsTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    dynamicColor: Boolean = false,  // Dynamic color is available on Android 12+
     content: @Composable () -> Unit
 ) {
     val colorScheme = when {
