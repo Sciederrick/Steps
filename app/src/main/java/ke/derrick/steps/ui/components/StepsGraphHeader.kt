@@ -26,7 +26,7 @@ fun StepsGraphHeader(numSteps: Int = 0) {
     Row(horizontalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxWidth()) {
         Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(
             dimensionResource(id = R.dimen.spacing_md))) {
-            Surface(shape = RoundedShapes.medium, color = MaterialTheme.colorScheme.surface,
+            Surface(shape = RoundedShapes.large, color = MaterialTheme.colorScheme.surface,
                 modifier = Modifier.size(55.dp)
             ) {
                 Icon(painter = painterResource(id = R.drawable.ic_flame_fill_24dp),

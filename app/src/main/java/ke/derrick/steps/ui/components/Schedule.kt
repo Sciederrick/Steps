@@ -55,7 +55,7 @@ fun Schedule(dayWithWorkoutStatus: Array<Int>, onSchedule: (Int) -> Unit = {}) {
                     modifier = Modifier
                         .padding(6.dp)
                         .testTag("ScheduleCard"),
-                    shape = RoundedShapes.small) {
+                    shape = RoundedShapes.medium) {
                     Column(horizontalAlignment = Alignment.CenterHorizontally,
                         modifier = Modifier
                             .width(54.dp)
