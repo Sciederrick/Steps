@@ -2,6 +2,7 @@ package ke.derrick.steps.ui.main
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
+import android.graphics.Paint.Style
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.horizontalScroll
@@ -21,6 +22,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -35,9 +37,14 @@ import kotlin.random.Random
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.provideFactory())) {
-    Scaffold(topBar = { TopBar() },
-        modifier = Modifier
-            .padding(vertical = 16.dp, horizontal = 12.dp)) {
+    Scaffold(
+        topBar = { TopBar() },
+        modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp),
+        floatingActionButton = { Button(onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)) {
+            Icon(painter = painterResource(id = R.drawable.ic_walk_32dp), contentDescription = null)
+            Text(text = "Start", style = MaterialTheme.typography.headlineMedium)
+        }}
+    ) {
         val mContext = LocalContext.current
         Column(modifier = Modifier
             .padding(paddingValues = it)
@@ -67,6 +74,8 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
             GraphSection(cachedPoints = cachedPoints)
 
             StatsCards()
+            
+            Spacer(modifier = Modifier.size(100.dp))
         }
 
     }
