@@ -11,7 +11,6 @@ import androidx.compose.ui.Modifier
 import androidx.navigation.compose.rememberNavController
 import ke.derrick.steps.ui.splash.SplashScreen
 import ke.derrick.steps.ui.theme.StepsTheme
-import ke.derrick.steps.utils.createNotificationChannel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

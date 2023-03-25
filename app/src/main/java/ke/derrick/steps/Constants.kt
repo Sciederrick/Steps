@@ -18,5 +18,7 @@ enum class WorkoutStatus(val color: Color) {
 
 const val SCHEDULE_NOTIF_CHANNEL_ID = "STEPS_01"
 const val SCHEDULE_NOTIF_ID = 1
+const val ONGOING_NOTIF_CHANNEL_ID = "STEPS_02"
+const val ONGOING_NOTIF_ID = 2
 const val EXTRA_SCHEDULE_NOTIF_TIME = "ke.derrick.steps.SCHEDULED_TIME"
 const val BROADCAST_REQUEST_CODE = 12345

@@ -40,10 +40,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
     Scaffold(
         topBar = { TopBar() },
         modifier = Modifier.padding(vertical = 16.dp, horizontal = 12.dp),
-        floatingActionButton = { Button(onClick = { /*TODO*/ }, colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.tertiary)) {
-            Icon(painter = painterResource(id = R.drawable.ic_walk_32dp), contentDescription = null)
-            Text(text = "Start", style = MaterialTheme.typography.headlineMedium)
-        }}
+        floatingActionButton = { FloatingActionButton() }
     ) {
         val mContext = LocalContext.current
         Column(modifier = Modifier

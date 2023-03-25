@@ -1,19 +1,24 @@
 <resources>
     <string name="app_name">Steps</string>
     <string name="app_dashboard">Dashboard</string>
-    <string name="menu_options_button_icon">menu options button icon</string>
-    <string name="dropdown_menu_item_go_to_google_maps">go to google maps icon</string>
-    <string name="dropdown_menu_item_adjust_settings_icon">adjust settings icon</string>
-    <string name="dropdown_menu_item_google_maps_text">google maps</string>
-    <string name="dropdown_menu_item_settings_text">settings</string>
+    <string name="menu_options_button_icon">Menu options button icon</string>
+    <string name="dropdown_menu_item_go_to_google_maps">Go to google maps icon</string>
+    <string name="dropdown_menu_item_adjust_settings_icon">Adjust settings icon</string>
+    <string name="dropdown_menu_item_google_maps_text">Google maps</string>
+    <string name="dropdown_menu_item_settings_text">Settings</string>
     <string name="section_schedule_title">SCHEDULE</string>
-    <string name="label_completed_exercise">completed exercise icon</string>
-    <string name="label_missed_exercise">missed exercise icon</string>
-    <string name="label_scheduled_exercise">scheduled exercise icon</string>
-    <string name="label_future_exercise">future exercise icon</string>
-    <string name="notif_title">Schedule</string>
+    <string name="label_completed_exercise">Completed exercise icon</string>
+    <string name="label_missed_exercise">Missed exercise icon</string>
+    <string name="label_scheduled_exercise">Scheduled exercise icon</string>
+    <string name="label_future_exercise">Future exercise icon</string>
+    <string name="notif_schedule_title">Schedule</string>
     <string name="notif_schedule_channel_name">When its time for your scheduled workout</string>
+    <string name="notif_ongoing_channel_name">When you start steps tracker sensor</string>
     <string name="notif_action_snooze_30">Snooze 30 min</string>
-    <string name="dropdown_menu_item_this_week">this week</string>
-    <string name="dropdown_menu_item_last_week">last week</string>
+    <string name="notif_ongoing_title">Steps tracker</string>
+    <string name="notif_ongoing_text">100</string>
+    <string name="notif_ongoing_subtext">Steps</string>
+    <string name="dropdown_menu_item_this_week">This week</string>
+    <string name="dropdown_menu_item_last_week">Last week</string>
+    <string name="my_foreground_service_name">Steps tracker</string>
 </resources>

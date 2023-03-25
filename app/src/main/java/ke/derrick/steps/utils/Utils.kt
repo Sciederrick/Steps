@@ -1,5 +1,6 @@
 package ke.derrick.steps.utils
 
+import android.app.Notification
 import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
@@ -24,7 +25,7 @@ fun getDayOfTheWeek(): Int {
 fun getCurrentHourMinute() =
     Pair(LocalTime.now().hour, LocalTime.now().minute)
 
-fun makeStepsNotification(mContext: Context, title: String, content: String, scheduledTime: String) {
+fun makeStepsReminderNotification(mContext: Context, title: String, content: String, scheduledTime: String) {
     val intent = Intent(mContext, MainActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
     }
@@ -45,6 +46,7 @@ fun makeStepsNotification(mContext: Context, title: String, content: String, sch
         .setColor(ContextCompat.getColor(mContext, R.color.blue_800))
         .setColorized(true)
         .setPriority(NotificationCompat.PRIORITY_MAX)
+        .setCategory(NotificationCompat.CATEGORY_REMINDER)
         .setContentIntent(pendingIntent)
         .setAutoCancel(true)
         .addAction(R.drawable.ic_snooze_24dp, mContext.getString(R.string.notif_action_snooze_30), snoozePendingIntent)
@@ -54,18 +56,39 @@ fun makeStepsNotification(mContext: Context, title: String, content: String, sch
     }
 }
 
+fun makeStepsOngoingNotification(mContext: Context): Notification {
+    val notification = NotificationCompat.Builder(mContext, ONGOING_NOTIF_CHANNEL_ID)
+        .setSmallIcon(R.drawable.ic_notification)
+        .setContentTitle(mContext.getString(R.string.notif_ongoing_title))
+        .setContentText(mContext.getString(R.string.notif_ongoing_text))
+        .setSubText(mContext.getString(R.string.notif_ongoing_subtext))
+        .setColor(ContextCompat.getColor(mContext, R.color.blue_800))
+        .setColorized(true)
+        .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
+        .build()
+
+    with(NotificationManagerCompat.from(mContext.applicationContext)) {
+        notify(ONGOING_NOTIF_ID, notification)
+    }
+
+    return notification
+}
+
 fun cancelNotification(mContext: Context, notificationId: Int) {
     NotificationManagerCompat.from(mContext.applicationContext).cancel(notificationId)
 }
 
-fun createNotificationChannel(mContext: Context) {
+fun createNotificationChannels(mContext: Context) {
     val name = mContext.getString(R.string.notif_schedule_channel_name)
     val importance = NotificationManager.IMPORTANCE_HIGH
     val mChannel = NotificationChannel(SCHEDULE_NOTIF_CHANNEL_ID, name, importance)
+
+    val name2 = mContext.getString(R.string.notif_ongoing_channel_name)
+    val mChannel2 = NotificationChannel(ONGOING_NOTIF_CHANNEL_ID, name2, importance)
     // Register the channel with the system.
     val notificationManager
         = mContext.getSystemService(NOTIFICATION_SERVICE) as NotificationManager
-    notificationManager.createNotificationChannel(mChannel)
+    notificationManager.createNotificationChannels(listOf(mChannel, mChannel2))
 }
 
 fun convertToTwoDigitNumberString(number: Int): String {
