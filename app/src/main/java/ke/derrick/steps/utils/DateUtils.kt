@@ -57,6 +57,7 @@ fun makeStepsReminderNotification(mContext: Context, title: String, content: Str
 }
 
 fun makeStepsOngoingNotification(mContext: Context): Notification {
+//    val intent = Intent(mContext, )
     val notification = NotificationCompat.Builder(mContext, ONGOING_NOTIF_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_notification)
         .setContentTitle(mContext.getString(R.string.notif_ongoing_title))
@@ -64,14 +65,37 @@ fun makeStepsOngoingNotification(mContext: Context): Notification {
         .setSubText(mContext.getString(R.string.notif_ongoing_subtext))
         .setColor(ContextCompat.getColor(mContext, R.color.blue_800))
         .setColorized(true)
+        .setOnlyAlertOnce(true)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .build()
+        // Enable launching the player by clicking the notification
+//        .setContentIntent(pendingIntent)
+    // Stop the service when the notification is swiped away
+//    setDeleteIntent(
+//        MediaButtonReceiver.buildMediaButtonPendingIntent(
+//            context,
+//            PlaybackStateCompat.ACTION_STOP
+//        )
+//    )
+//        .addAction(R.drawable.ic_pause_24dp, mContext.getString(R.string.notif_action_pause), snoozePendingIntent)
+    // Take advantage of MediaStyle features
+//        .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
+//        .setShowActionsInCompactView(0)
+
+        // Add a cancel button
+//        .setShowCancelButton(true)
+//        .setCancelButtonIntent(
+//            MediaButtonReceiver.buildMediaButtonPendingIntent(
+//                context,
+//                PlaybackStateCompat.ACTION_STOP
+//            )
+//        )
+//    )
 
     with(NotificationManagerCompat.from(mContext.applicationContext)) {
-        notify(ONGOING_NOTIF_ID, notification)
+        notify(ONGOING_NOTIF_ID, notification.build())
     }
 
-    return notification
+    return notification.build()
 }
 
 fun cancelNotification(mContext: Context, notificationId: Int) {

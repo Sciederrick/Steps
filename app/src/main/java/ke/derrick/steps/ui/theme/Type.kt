@@ -18,6 +18,13 @@ val Rubik = FontFamily(
 )
 // Set of Material typography styles to start with
 val Typography = Typography(
+    headlineLarge = TextStyle(
+        fontFamily = Rubik,
+        fontWeight = FontWeight.Medium,
+        fontSize = 32.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.5.sp
+    ),
     headlineMedium = TextStyle(
         fontFamily = Rubik,
         fontWeight = FontWeight.Medium,

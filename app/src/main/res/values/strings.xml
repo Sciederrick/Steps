@@ -15,6 +15,8 @@
     <string name="notif_schedule_channel_name">When its time for your scheduled workout</string>
     <string name="notif_ongoing_channel_name">When you start steps tracker sensor</string>
     <string name="notif_action_snooze_30">Snooze 30 min</string>
+    <string name="notif_action_pause">Pause</string>
+    <string name="notif_action_stop">Stop</string>
     <string name="notif_ongoing_title">Steps tracker</string>
     <string name="notif_ongoing_text">100</string>
     <string name="notif_ongoing_subtext">Steps</string>
