@@ -43,6 +43,7 @@
         </receiver>
         <service
             android:name=".service.StepsTrackerService"
+            android:description="@string/my_foreground_service_desc"
             android:exported="false"
             android:label="@string/my_foreground_service_name">
         </service>

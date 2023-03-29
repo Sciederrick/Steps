@@ -23,4 +23,5 @@
     <string name="dropdown_menu_item_this_week">This week</string>
     <string name="dropdown_menu_item_last_week">Last week</string>
     <string name="my_foreground_service_name">Steps tracker</string>
+    <string name="my_foreground_service_desc">This service runs a sensor that tracks your steps (pedometer). Disabling this service will render the Steps tracker application useless.</string>
 </resources>

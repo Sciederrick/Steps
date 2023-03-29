@@ -8,6 +8,7 @@ import android.hardware.Sensor
 import android.hardware.SensorEvent
 import android.hardware.SensorEventListener
 import android.hardware.SensorManager
+import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
@@ -15,11 +16,18 @@ import androidx.core.content.ContextCompat
 import ke.derrick.steps.ONGOING_NOTIF_ID
 import ke.derrick.steps.utils.NotifUtils
 import ke.derrick.steps.utils.makeStepsOngoingNotification
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlin.properties.Delegates
 
 class StepsTrackerService: Service(), SensorEventListener {
     private lateinit var sensorManager: SensorManager
     private lateinit var notif: NotifUtils
     private var isSensorPresent = true
+    // Binder given to clients.
+    private val binder = LocalBinder()
+    private var _numSteps = MutableStateFlow(0)
+    var numSteps = _numSteps.asStateFlow()
 
     override fun onCreate() {
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -49,19 +57,24 @@ class StepsTrackerService: Service(), SensorEventListener {
         return START_STICKY // The service can be paused and resumed
     }
 
-
-    override fun onBind(p0: Intent?): IBinder? {
-        return null
-    }
-
     override fun onSensorChanged(event: SensorEvent?) {
         if (event == null) return
         if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
-            notif.updateStepsOngoingNotification("${event.values[0].toInt()}")
+            _numSteps.value = event.values[0].toInt()
+            notif.updateStepsOngoingNotification("${_numSteps.value}")
         }
     }
 
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) = Unit
+
+    override fun onBind(p0: Intent?): IBinder {
+        return binder
+    }
+
+    inner class LocalBinder : Binder() {
+        // Return this instance of StepsTrackerService so clients can call public methods.
+        fun getService(): StepsTrackerService = this@StepsTrackerService
+    }
 
     companion object {
         const val TAG = "StepsTrackerService"
