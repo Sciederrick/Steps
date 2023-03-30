@@ -11,6 +11,8 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.DropdownMenu
+import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -18,15 +20,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.LifecycleEventObserver
-import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.lifecycleScope
 import ke.derrick.steps.StepsActivity.Companion.TAG
 import ke.derrick.steps.service.StepsTrackerService
 import ke.derrick.steps.ui.theme.StepsTheme
@@ -64,7 +62,8 @@ fun StepsScreen() {
             }
 
             override fun onServiceDisconnected(arg0: ComponentName) {
-                mBound = false
+                if (arg0.className == "StepsTrackerService")
+                    mBound = false
             }
         }
     }
@@ -83,7 +82,7 @@ fun StepsScreen() {
         .fillMaxSize()
         .padding(vertical = 16.dp, horizontal = 12.dp)
     ) {
-        Button(onClick = {
+        Button(onClick = { // Back button
             val intent = Intent(mContext, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
             }
@@ -97,6 +96,34 @@ fun StepsScreen() {
             Text(text = "Back", style = MaterialTheme.typography.bodyLarge)
         }
 
+        // Drop down menu - stop service
+        Box(modifier = Modifier.align(Alignment.TopEnd)) {
+            var expanded by rememberSaveable { mutableStateOf(false) }
+            IconButton(onClick = { expanded = true }) {
+                Icon(painter = painterResource(id = R.drawable.ic_more_32dp),
+                    tint = Color.White,
+                    contentDescription = stringResource(id = R.string.menu_options_button_icon)
+                )
+            }
+
+            DropdownMenu(modifier = Modifier.background(MaterialTheme.colorScheme.surface),
+                expanded = expanded, onDismissRequest = { expanded = false }) {
+                DropdownMenuItem(onClick = {
+                    mContext.unbindService(connection)
+                    StepsTrackerService.stopService(mContext)
+                    mBound = false
+                }) {
+                    Icon(painter = painterResource(id = R.drawable.ic_stop_24dp),
+                        tint = Color.Red,
+                        contentDescription = stringResource(id = R.string.dropdown_menu_item_stop_service)
+                    )
+                    Text(text = stringResource(id = R.string.dropdown_menu_item_stop_service_text),
+                        modifier = Modifier.padding(start = 4.dp))
+                }
+            }
+        }
+
+        // Step count text
         val numSteps = mService?.numSteps?.collectAsState()
         if (mBound) {
             Column(modifier = Modifier.align(Alignment.Center),

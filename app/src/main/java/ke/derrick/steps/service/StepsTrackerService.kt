@@ -11,6 +11,7 @@ import android.hardware.SensorManager
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
+import android.util.Log
 import androidx.core.content.ContextCompat
 import ke.derrick.steps.ONGOING_NOTIF_ID
 import ke.derrick.steps.IsServiceStart
@@ -24,6 +25,7 @@ class StepsTrackerService: Service(), SensorEventListener {
     private var isSensorPresent = true
     private val binder = LocalBinder() // Binder given to clients.
     private var _numSteps = MutableStateFlow(0)
+
     var numSteps = _numSteps.asStateFlow()
 
     override fun onCreate() {
@@ -44,7 +46,10 @@ class StepsTrackerService: Service(), SensorEventListener {
         super.onStartCommand(intent, flags, startId)
 
         when(intent?.getIntExtra(IsServiceStart.SERVICE_STOP.title, 1)) {
-            0 -> stopSelf(startId)
+            0 -> {
+                Log.d(TAG, "stop service from stop self")
+                stopSelf(startId)
+            }
             1 -> {
                 val notification = notif.makeStepsOngoingNotification()
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
@@ -73,6 +78,12 @@ class StepsTrackerService: Service(), SensorEventListener {
         return binder
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        sensorManager.unregisterListener(this)
+        Log.d(TAG, "service destroyed")
+    }
+
     inner class LocalBinder : Binder() {
         // Return this instance of StepsTrackerService so clients can call public methods.
         fun getService(): StepsTrackerService = this@StepsTrackerService
@@ -87,6 +98,7 @@ class StepsTrackerService: Service(), SensorEventListener {
             ContextCompat.startForegroundService(context, startIntent)
         }
         fun stopService(context: Context) {
+            Log.d(TAG, "trying to stop a service")
             val stopIntent = Intent(context, StepsTrackerService::class.java)
             context.stopService(stopIntent)
         }

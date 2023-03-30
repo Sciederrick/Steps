@@ -6,6 +6,8 @@
     <string name="dropdown_menu_item_adjust_settings_icon">Adjust settings icon</string>
     <string name="dropdown_menu_item_google_maps_text">Google maps</string>
     <string name="dropdown_menu_item_settings_text">Settings</string>
+    <string name="dropdown_menu_item_stop_service_text">Stop</string>
+    <string name="dropdown_menu_item_stop_service">Stop service</string>
     <string name="section_schedule_title">SCHEDULE</string>
     <string name="label_completed_exercise">Completed exercise icon</string>
     <string name="label_missed_exercise">Missed exercise icon</string>
