@@ -16,6 +16,10 @@ enum class WorkoutStatus(val color: Color) {
     DONE(Green400), MISSED(Pink700), PENDING(Blue800), SCHEDULED(White)
 }
 
+enum class IsServiceStart(val title: String) {
+    SERVICE_STOP("IsServiceStart"), SERVICE_START("IsServiceStart")
+}
+
 const val SCHEDULE_NOTIF_CHANNEL_ID = "STEPS_01"
 const val SCHEDULE_NOTIF_ID = 1
 const val ONGOING_NOTIF_CHANNEL_ID = "STEPS_02"

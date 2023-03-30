@@ -11,13 +11,20 @@ import androidx.core.app.NotificationManagerCompat
 import androidx.core.content.ContextCompat
 import ke.derrick.steps.*
 import ke.derrick.steps.receiver.SnoozeWorkoutNotificationReceiver
+import ke.derrick.steps.service.StepsTrackerService
 
 class NotifUtils(private val mContext: Context) {
-    val intent = Intent(mContext, StepsActivity::class.java).apply {
+    private val startActivityIntent = Intent(mContext, StepsActivity::class.java).apply {
         flags = Intent.FLAG_ACTIVITY_SINGLE_TOP
     }
-    private val pendingIntent: PendingIntent = PendingIntent
-        .getActivity(mContext, 0, intent, PendingIntent.FLAG_IMMUTABLE)
+    private val goToStepsActivity: PendingIntent = PendingIntent
+        .getActivity(mContext, 0, startActivityIntent, PendingIntent.FLAG_IMMUTABLE)
+
+    private val stopServiceIntent = Intent(mContext, StepsTrackerService::class.java).apply {
+        putExtra(IsServiceStart.SERVICE_STOP.title, IsServiceStart.SERVICE_STOP.ordinal)
+    }
+    private val stopService: PendingIntent = PendingIntent.getForegroundService(mContext,
+        0, stopServiceIntent, PendingIntent.FLAG_IMMUTABLE)
 
     private val notifOngoingBuilder = NotificationCompat.Builder(mContext, ONGOING_NOTIF_CHANNEL_ID)
         .setSmallIcon(R.drawable.ic_notification)
@@ -28,28 +35,16 @@ class NotifUtils(private val mContext: Context) {
         .setColorized(true)
         .setOnlyAlertOnce(true)
         .setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
-        .setContentIntent(pendingIntent)
-    // Stop the service when the notification is swiped away
-    //    setDeleteIntent(
-    //        MediaButtonReceiver.buildMediaButtonPendingIntent(
-    //            context,
-    //            PlaybackStateCompat.ACTION_STOP
-    //        )
-    //    )
-    //        .addAction(R.drawable.ic_pause_24dp, mContext.getString(R.string.notif_action_pause), snoozePendingIntent)
-    // Take advantage of MediaStyle features
-    //        .setStyle(android.support.v4.media.app.NotificationCompat.MediaStyle()
-    //        .setShowActionsInCompactView(0)
+        .setContentIntent(goToStepsActivity)
+        .setDeleteIntent(stopService)    // Stop the service when the notification is swiped away
+        .addAction(R.drawable.ic_stop_24dp, mContext.getString(R.string.notif_action_stop), stopService)
+        .setStyle( // Take advantage of MediaStyle features
+            androidx.media.app.NotificationCompat.MediaStyle()
+                .setShowActionsInCompactView(0)
+                .setShowCancelButton(true)
+                .setCancelButtonIntent(stopService)
+        )
 
-    // Add a cancel button
-    //        .setShowCancelButton(true)
-    //        .setCancelButtonIntent(
-    //            MediaButtonReceiver.buildMediaButtonPendingIntent(
-    //                context,
-    //                PlaybackStateCompat.ACTION_STOP
-    //            )
-    //        )
-    //    )
     fun makeStepsReminderNotification(title: String, content: String, scheduledTime: String) {
         val intent = Intent(mContext, MainActivity::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_SINGLE_TOP

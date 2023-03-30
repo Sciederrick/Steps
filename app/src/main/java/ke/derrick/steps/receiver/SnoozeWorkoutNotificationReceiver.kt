@@ -6,16 +6,17 @@ import android.content.Intent
 import ke.derrick.steps.EXTRA_SCHEDULE_NOTIF_TIME
 import ke.derrick.steps.SCHEDULE_NOTIF_ID
 import ke.derrick.steps.domain.SnoozeWorkoutReminderUseCase
-import ke.derrick.steps.utils.cancelNotification
+import ke.derrick.steps.utils.NotifUtils
 
 class SnoozeWorkoutNotificationReceiver(): BroadcastReceiver() {
     private val snoozeWorkoutReminderUseCase = SnoozeWorkoutReminderUseCase()
-    override fun onReceive(p0: Context?, p1: Intent?) {
-        if (p0 != null && p1 != null) {
-            snoozeWorkoutReminderUseCase(p0,
+    override fun onReceive(mContext: Context?, p1: Intent?) {
+        if (mContext != null && p1 != null) {
+            val notification = NotifUtils(mContext)
+            snoozeWorkoutReminderUseCase(mContext,
                 p1.getStringExtra(EXTRA_SCHEDULE_NOTIF_TIME) ?: "Snoozed",
                 30 * 60 * 1000)
-            cancelNotification(p0, SCHEDULE_NOTIF_ID)
+            notification.cancelNotification(SCHEDULE_NOTIF_ID)
         }
     }
 }

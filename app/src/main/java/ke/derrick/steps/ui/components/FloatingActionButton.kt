@@ -38,7 +38,6 @@ fun FAB() {
                 ContextCompat.checkSelfPermission(mContext, Manifest.permission.ACTIVITY_RECOGNITION)
                         == PackageManager.PERMISSION_GRANTED -> {
                     // Permission is granted
-                    Log.d(MainActivity.TAG, "permission granted")
                     StepsTrackerService.startService(mContext)
                 }
                 ActivityCompat.shouldShowRequestPermissionRationale(
@@ -47,12 +46,10 @@ fun FAB() {
                 )
                 -> {
                     // Additional rationale should be displayed
-                    Log.d(MainActivity.TAG, "additional rationale should be displayed")
                     requestPermissionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION)
                 }
                 else -> {
                     // Permission has not been asked yet
-                    Log.d(MainActivity.TAG, "permission has not been asked yet")
                     requestPermissionLauncher.launch(Manifest.permission.ACTIVITY_RECOGNITION)
                 }
 
