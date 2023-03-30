@@ -90,7 +90,7 @@ fun StepsScreen() {
         },
             modifier = Modifier.align(Alignment.TopStart),
             contentPadding = PaddingValues(start = 0.dp),
-            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent)
+            colors = ButtonDefaults.buttonColors(containerColor = Color.Transparent, contentColor = Color.White)
         ) {
             Icon(painter = painterResource(id = R.drawable.ic_left_32dp), contentDescription = null)
             Text(text = "Back", style = MaterialTheme.typography.bodyLarge)
@@ -118,6 +118,7 @@ fun StepsScreen() {
                         contentDescription = stringResource(id = R.string.dropdown_menu_item_stop_service)
                     )
                     Text(text = stringResource(id = R.string.dropdown_menu_item_stop_service_text),
+                        color = MaterialTheme.colorScheme.onSurface,
                         modifier = Modifier.padding(start = 4.dp))
                 }
             }

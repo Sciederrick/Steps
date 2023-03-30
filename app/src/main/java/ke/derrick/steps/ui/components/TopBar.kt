@@ -31,7 +31,7 @@ fun TopBar() {
             Text(text = stringResource(id = R.string.app_dashboard), style = MaterialTheme.typography.headlineMedium)
         }
 
-        Box{
+        Box {
             var expanded by rememberSaveable { mutableStateOf(false) }
             IconButton(onClick = { expanded = true }) {
                 Icon(painter = painterResource(id = R.drawable.ic_more_32dp),
