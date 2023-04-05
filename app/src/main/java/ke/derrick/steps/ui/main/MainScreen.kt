@@ -17,6 +17,7 @@ import ke.derrick.steps.R
 import ke.derrick.steps.WorkoutStatus
 import ke.derrick.steps.ui.components.*
 import ke.derrick.steps.utils.getCurrentHourMinute
+import kotlin.math.abs
 import kotlin.random.Random
 
 @SuppressLint("MutableCollectionMutableState")
@@ -97,7 +98,7 @@ fun GraphSection(cachedPoints: List<Pair<Float, Int>>) {
             else if (start - offset > cachedPoints.size - numPoints)
                 start = cachedPoints.size - numPoints
             else
-                start -= offset
+                if (abs(offset) != 0) start -= (offset/abs(offset))
         }
     }
 }

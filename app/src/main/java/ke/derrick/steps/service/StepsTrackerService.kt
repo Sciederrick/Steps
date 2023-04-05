@@ -15,18 +15,37 @@ import android.util.Log
 import androidx.core.content.ContextCompat
 import ke.derrick.steps.ONGOING_NOTIF_ID
 import ke.derrick.steps.IsServiceStart
+import ke.derrick.steps.StepsApplication
+import ke.derrick.steps.data.local.entities.Steps
+import ke.derrick.steps.data.repository.Repository
 import ke.derrick.steps.utils.NotifUtils
+import ke.derrick.steps.utils.convertToTwoDigitNumberString
+import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.time.LocalDate
+import kotlin.properties.Delegates
 
-class StepsTrackerService: Service(), SensorEventListener {
+class StepsTrackerService: Service(), SensorEventListener, CoroutineScope {
     private lateinit var sensorManager: SensorManager
     private lateinit var notif: NotifUtils
     private var isSensorPresent = true
     private val binder = LocalBinder() // Binder given to clients.
-    private var _numSteps = MutableStateFlow(0)
 
+    private var _numSteps = MutableStateFlow(0L)
     var numSteps = _numSteps.asStateFlow()
+
+    private lateinit var currentDate: LocalDate
+    private var startingStepCount by Delegates.notNull<Long>()
+    private lateinit var repository: Repository
+
+    private var job = Job()
+    override val coroutineContext
+        get() = job + Dispatchers.IO
+    private lateinit var initStartingStepCount: Job
+
+    private var existingRecord: Steps? = null
+    private var isUpdate = false
 
     override fun onCreate() {
         sensorManager = getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -39,24 +58,46 @@ class StepsTrackerService: Service(), SensorEventListener {
             }
 
         }
+
         notif = NotifUtils(applicationContext)
+
+        repository = (applicationContext as StepsApplication).repo
+
+        currentDate = LocalDate.now()
+
+        initStartingStepCount = launch {
+            val lastRecord = async { repository.getLastStepCount() }.await()
+            startingStepCount = lastRecord?.count ?: 0L
+            // check if the date (YYYY-MM-DD) match.
+            // if they do match, the next write to the DB will be an update
+            isUpdate =
+                (lastRecord?.createdAt?.split("T")?.get(0) ?: "") == currentDate.toString()
+            if (isUpdate) existingRecord = lastRecord
+
+            Log.d(TAG, "starting step count: $startingStepCount")
+        }
+
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         super.onStartCommand(intent, flags, startId)
 
+        currentDate = LocalDate.now()
         when(intent?.getIntExtra(IsServiceStart.SERVICE_STOP.title, 1)) {
             0 -> {
-                Log.d(TAG, "stop service from stop self")
                 stopSelf(startId)
             }
             1 -> {
-                val notification = notif.makeStepsOngoingNotification()
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    startForeground(ONGOING_NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE)
-                } else {
-                    startForeground(ONGOING_NOTIF_ID, notification)
+                launch(Dispatchers.Main) {
+                    initStartingStepCount.join()
+                    val notification = notif.makeStepsOngoingNotification()
+                    if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                        startForeground(ONGOING_NOTIF_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_NONE)
+                    } else {
+                        startForeground(ONGOING_NOTIF_ID, notification)
+                    }
                 }
+
             }
 
         }
@@ -67,8 +108,43 @@ class StepsTrackerService: Service(), SensorEventListener {
     override fun onSensorChanged(event: SensorEvent?) {
         if (event == null) return
         if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
-            _numSteps.value = event.values[0].toInt()
-            notif.updateStepsOngoingNotification("${_numSteps.value}")
+
+            launch(Dispatchers.Main) {
+                initStartingStepCount.join()
+                _numSteps.value = event.values[0].toInt() - startingStepCount
+                Log.d(TAG, "${_numSteps.value}")
+                notif.updateStepsOngoingNotification("${_numSteps.value}")
+            }
+
+            // It's a new day hence store the last day's value
+            // otherwise, store step count onDestroy since we'll make less calls to the DB this way
+            if (currentDate != LocalDate.now()) {
+                syncStepCountWithDB()
+                currentDate = LocalDate.now()
+            }
+        }
+    }
+
+    private fun syncStepCountWithDB() {
+        launch {
+            if (isUpdate) {
+                val workout = repository.createSteps(
+                    id = existingRecord!!.id,
+                    count = existingRecord!!.count + _numSteps.value,
+                    day = convertToTwoDigitNumberString(
+                        LocalDate.parse(currentDate.toString()).dayOfMonth
+                    )
+                )
+                repository.updateStepCount(workout)
+            } else {
+                val workout = repository.createSteps(
+                    count = _numSteps.value,
+                    day = convertToTwoDigitNumberString(
+                        LocalDate.parse(currentDate.toString()).dayOfMonth
+                    )
+                )
+                repository.insertStepCount(workout)
+            }
         }
     }
 
@@ -80,8 +156,9 @@ class StepsTrackerService: Service(), SensorEventListener {
 
     override fun onDestroy() {
         super.onDestroy()
+        syncStepCountWithDB()
         sensorManager.unregisterListener(this)
-        Log.d(TAG, "service destroyed")
+        job.cancel()
     }
 
     inner class LocalBinder : Binder() {

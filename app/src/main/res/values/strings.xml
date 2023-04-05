@@ -20,7 +20,7 @@
     <string name="notif_action_pause">Pause</string>
     <string name="notif_action_stop">Stop</string>
     <string name="notif_ongoing_title">Steps tracker</string>
-    <string name="notif_ongoing_text">100</string>
+    <string name="notif_ongoing_text">0</string>
     <string name="notif_ongoing_subtext">Steps</string>
     <string name="dropdown_menu_item_this_week">This week</string>
     <string name="dropdown_menu_item_last_week">Last week</string>
