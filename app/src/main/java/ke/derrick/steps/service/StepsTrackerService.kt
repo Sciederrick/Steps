@@ -35,6 +35,8 @@ class StepsTrackerService: Service(), SensorEventListener, CoroutineScope {
     private var _numSteps = MutableStateFlow(0L)
     var numSteps = _numSteps.asStateFlow()
 
+    private var cumulativeStepCount = 0L
+
     private lateinit var currentDate: LocalDate
     private var startingStepCount by Delegates.notNull<Long>()
     private lateinit var repository: Repository
@@ -67,7 +69,7 @@ class StepsTrackerService: Service(), SensorEventListener, CoroutineScope {
 
         initStartingStepCount = launch {
             val lastRecord = async { repository.getLastStepCount() }.await()
-            startingStepCount = lastRecord?.count ?: 0L
+            startingStepCount = repository.getInitialStepCount() ?: 0L
             // check if the date (YYYY-MM-DD) match.
             // if they do match, the next write to the DB will be an update
             isUpdate =
@@ -108,10 +110,10 @@ class StepsTrackerService: Service(), SensorEventListener, CoroutineScope {
     override fun onSensorChanged(event: SensorEvent?) {
         if (event == null) return
         if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
-
+            cumulativeStepCount = event.values[0].toLong()
             launch(Dispatchers.Main) {
                 initStartingStepCount.join()
-                _numSteps.value = event.values[0].toInt() - startingStepCount
+                _numSteps.value = cumulativeStepCount - startingStepCount
                 Log.d(TAG, "${_numSteps.value}")
                 notif.updateStepsOngoingNotification("${_numSteps.value}")
             }
@@ -148,6 +150,12 @@ class StepsTrackerService: Service(), SensorEventListener, CoroutineScope {
         }
     }
 
+    private fun syncInitialStepCount() {
+        launch {
+            if (cumulativeStepCount > 0) repository.persistInitialStepCount(cumulativeStepCount)
+        }
+    }
+
     override fun onAccuracyChanged(p0: Sensor?, p1: Int) = Unit
 
     override fun onBind(p0: Intent?): IBinder {
@@ -157,6 +165,7 @@ class StepsTrackerService: Service(), SensorEventListener, CoroutineScope {
     override fun onDestroy() {
         super.onDestroy()
         syncStepCountWithDB()
+        syncInitialStepCount()
         sensorManager.unregisterListener(this)
         job.cancel()
     }

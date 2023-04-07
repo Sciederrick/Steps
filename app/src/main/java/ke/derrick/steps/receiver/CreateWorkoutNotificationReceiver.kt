@@ -7,11 +7,11 @@ import ke.derrick.steps.EXTRA_SCHEDULE_NOTIF_TIME
 import ke.derrick.steps.utils.NotifUtils
 
 class CreateWorkoutNotificationReceiver: BroadcastReceiver() {
-    override fun onReceive(mContext: Context?, p1: Intent?) {
-        if (mContext != null && p1 != null) {
+    override fun onReceive(mContext: Context?, mIntent: Intent?) {
+        if (mContext != null && mIntent != null) {
             val notification = NotifUtils(mContext)
             notification.makeStepsReminderNotification("Reminder", "It's workout time!",
-                p1.getStringExtra(EXTRA_SCHEDULE_NOTIF_TIME) ?: "")
+                mIntent.getStringExtra(EXTRA_SCHEDULE_NOTIF_TIME) ?: "")
         }
     }
 }

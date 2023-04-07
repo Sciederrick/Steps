@@ -14,9 +14,6 @@ interface StepsDao {
     @Query("SELECT * FROM `steps` LIMIT 1")
     fun getLastStepCount(): Steps?
 
-    @Query("SELECT * FROM `steps` WHERE `created_at` LIKE :createdAt")
-    fun getTodaysStepCount(createdAt: String): Steps?
-
     @Update
     fun update(steps: Steps)
 

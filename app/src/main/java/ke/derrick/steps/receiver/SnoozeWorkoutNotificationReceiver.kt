@@ -10,11 +10,11 @@ import ke.derrick.steps.utils.NotifUtils
 
 class SnoozeWorkoutNotificationReceiver(): BroadcastReceiver() {
     private val snoozeWorkoutReminderUseCase = SnoozeWorkoutReminderUseCase()
-    override fun onReceive(mContext: Context?, p1: Intent?) {
-        if (mContext != null && p1 != null) {
+    override fun onReceive(mContext: Context?, mIntent: Intent?) {
+        if (mContext != null && mIntent != null) {
             val notification = NotifUtils(mContext)
             snoozeWorkoutReminderUseCase(mContext,
-                p1.getStringExtra(EXTRA_SCHEDULE_NOTIF_TIME) ?: "Snoozed",
+                mIntent.getStringExtra(EXTRA_SCHEDULE_NOTIF_TIME) ?: "Snoozed",
                 30 * 60 * 1000)
             notification.cancelNotification(SCHEDULE_NOTIF_ID)
         }

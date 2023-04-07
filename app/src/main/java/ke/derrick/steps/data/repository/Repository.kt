@@ -4,11 +4,14 @@ import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.longPreferencesKey
 import ke.derrick.steps.DaysOfTheWeek
+import ke.derrick.steps.STARTING_STEP_COUNT_KEY
 import ke.derrick.steps.WorkoutStatus
 import ke.derrick.steps.data.local.daos.StepsDao
 import ke.derrick.steps.data.local.entities.Steps
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
 
@@ -19,8 +22,6 @@ class Repository(private val dataStore: DataStore<Preferences>, private val step
             val key = intPreferencesKey(day.ordinal.toString())
             workoutStatusArr[day.ordinal] = dataStore.data
                 .map { preferences -> preferences[key] ?: WorkoutStatus.MISSED.ordinal }.first()
-
-
         }
         return workoutStatusArr.toTypedArray()
     }
@@ -41,9 +42,19 @@ class Repository(private val dataStore: DataStore<Preferences>, private val step
         return stepsDao.getLastStepCount()
     }
 
-    fun getTodaysStepCount(mDate: String): Steps? {
-        return stepsDao.getTodaysStepCount(mDate)
+    fun updateStepCount(steps: Steps) = stepsDao.update(steps)
+
+    // Figures for the step counter sensor are cumulative, I therefore need to store the last figure
+    // recorded inorder to calculate the difference and get the periodic step count that is then
+    // displayed on the UI
+    suspend fun getInitialStepCount() :Long?{
+        val key = longPreferencesKey(STARTING_STEP_COUNT_KEY)
+        return dataStore.data.map { data -> data[key] }.first()
     }
 
-    fun updateStepCount(steps: Steps) = stepsDao.update(steps)
+    suspend fun persistInitialStepCount(mValue: Long) { // Will apply in the next session
+        val key = longPreferencesKey(STARTING_STEP_COUNT_KEY)
+        dataStore.edit { data -> data[key] = mValue }
+    }
+
 }
