@@ -27,3 +27,4 @@ const val ONGOING_NOTIF_ID = 2
 const val EXTRA_SCHEDULE_NOTIF_TIME = "ke.derrick.steps.SCHEDULED_TIME"
 const val BROADCAST_REQUEST_CODE = 12345
 const val STARTING_STEP_COUNT_KEY = "ke.derrick.steps.STARTING_STEP_COUNT"
+const val ADD_DEFAULT_STEP_COUNT_WORK_NAME = "addDefaultStepCount"

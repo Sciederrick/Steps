@@ -49,11 +49,13 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
                 dayWithWorkoutStatus[dayOfTheWeek] = WorkoutStatus.SCHEDULED.ordinal
             }
 
-            val cachedPoints = (0..50).map { n ->
-                var num = Random.nextInt(350)
-                if (num <= 50)
-                    num += 100
-                 Pair(num.toFloat(), if (n > 31) n -31 else n)
+            val cachedPoints = (0..7).map { n ->
+                // Don't use random data, initialize with 0's
+//                var num = Random.nextInt(350)
+//                if (num <= 50)
+//                    num += 100
+//                 Pair(num.toFloat(), if (n > 31) n - 31 else n)
+                Pair(0.toFloat(), if (n > 31) n - 31 else n)
             }
             GraphSection(cachedPoints = cachedPoints)
 

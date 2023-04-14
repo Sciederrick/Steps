@@ -69,7 +69,7 @@ class StepsTrackerService: Service(), SensorEventListener, CoroutineScope {
 
         initStartingStepCount = launch {
             val lastRecord = async { repository.getLastStepCount() }.await()
-            startingStepCount = repository.getInitialStepCount() ?: 0L
+            startingStepCount = async { repository.getInitialStepCount() }.await() ?: 0L
             // check if the date (YYYY-MM-DD) match.
             // if they do match, the next write to the DB will be an update
             isUpdate =
@@ -111,6 +111,7 @@ class StepsTrackerService: Service(), SensorEventListener, CoroutineScope {
         if (event == null) return
         if (event.sensor.type == Sensor.TYPE_STEP_COUNTER) {
             cumulativeStepCount = event.values[0].toLong()
+            Log.d(TAG, "sensor count: $cumulativeStepCount")
             launch(Dispatchers.Main) {
                 initStartingStepCount.join()
                 _numSteps.value = cumulativeStepCount - startingStepCount

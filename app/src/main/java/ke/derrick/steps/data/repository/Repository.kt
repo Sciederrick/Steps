@@ -5,17 +5,27 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.longPreferencesKey
+import androidx.work.ExistingPeriodicWorkPolicy
+import androidx.work.PeriodicWorkRequestBuilder
+import androidx.work.WorkManager
+import ke.derrick.steps.ADD_DEFAULT_STEP_COUNT_WORK_NAME
 import ke.derrick.steps.DaysOfTheWeek
 import ke.derrick.steps.STARTING_STEP_COUNT_KEY
 import ke.derrick.steps.WorkoutStatus
 import ke.derrick.steps.data.local.daos.StepsDao
 import ke.derrick.steps.data.local.entities.Steps
+import ke.derrick.steps.worker.AddDefaultStepCountWorker
 import kotlinx.coroutines.flow.first
-import kotlinx.coroutines.flow.last
 import kotlinx.coroutines.flow.map
 import java.time.LocalDateTime
+import java.util.concurrent.TimeUnit
 
-class Repository(private val dataStore: DataStore<Preferences>, private val stepsDao: StepsDao) {
+class Repository(private val workManager: WorkManager,
+                 private val dataStore: DataStore<Preferences>, private val stepsDao: StepsDao) {
+    init {
+        addDefaultStepsValueToDB()
+    }
+
     suspend fun getSevenDayWorkoutStatus(): Array<Int> {
         val workoutStatusArr = IntArray(7)
         for (day in DaysOfTheWeek.values()) {
@@ -47,7 +57,7 @@ class Repository(private val dataStore: DataStore<Preferences>, private val step
     // Figures for the step counter sensor are cumulative, I therefore need to store the last figure
     // recorded inorder to calculate the difference and get the periodic step count that is then
     // displayed on the UI
-    suspend fun getInitialStepCount() :Long?{
+    suspend fun getInitialStepCount() :Long? {
         val key = longPreferencesKey(STARTING_STEP_COUNT_KEY)
         return dataStore.data.map { data -> data[key] }.first()
     }
@@ -55,6 +65,19 @@ class Repository(private val dataStore: DataStore<Preferences>, private val step
     suspend fun persistInitialStepCount(mValue: Long) { // Will apply in the next session
         val key = longPreferencesKey(STARTING_STEP_COUNT_KEY)
         dataStore.edit { data -> data[key] = mValue }
+    }
+
+    private fun addDefaultStepsValueToDB() {
+        val addDefaultStepCountWorkRequest =
+            PeriodicWorkRequestBuilder<AddDefaultStepCountWorker>(
+                repeatInterval = 24,
+                repeatIntervalTimeUnit = TimeUnit.HOURS
+            ).build()
+
+        workManager.enqueueUniquePeriodicWork(
+            ADD_DEFAULT_STEP_COUNT_WORK_NAME,
+            ExistingPeriodicWorkPolicy.KEEP,
+            addDefaultStepCountWorkRequest)
     }
 
 }

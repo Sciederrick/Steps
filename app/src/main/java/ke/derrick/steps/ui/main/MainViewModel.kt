@@ -1,6 +1,7 @@
 package ke.derrick.steps.ui.main
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
@@ -14,6 +15,12 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(private val repo: Repository,
                     private val createWorkoutReminder: CreateWorkoutReminderUseCase): ViewModel() {
+    init {
+        viewModelScope.launch {
+            getInitialStepCountAsync()
+        }
+    }
+
     fun createScheduleReminder(mContext: Context, dayOfTheWeek: Int, mHour: Int, mMinute: Int) = viewModelScope.launch {
         createWorkoutReminder(mContext, dayOfTheWeek, mHour, mMinute)
         repo.persistSchedule(dayOfTheWeek)
@@ -21,6 +28,13 @@ class MainViewModel(private val repo: Repository,
 
     fun getSevenDayWorkoutStatusAsync(): Deferred<Array<Int>> = viewModelScope.async {
         repo.getSevenDayWorkoutStatus()
+    }
+
+    private suspend fun getInitialStepCountAsync() {
+        val initialStepCount = viewModelScope.async {
+            repo.getInitialStepCount()
+        }.await()
+        Log.d(TAG, "initial step count: $initialStepCount")
     }
 
     companion object {
