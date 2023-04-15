@@ -52,6 +52,10 @@ class Repository(private val workManager: WorkManager,
         return stepsDao.getLastStepCount()
     }
 
+    fun getStepCount(today: String): Steps? {
+        return stepsDao.getStepCount(today)
+    }
+
     fun updateStepCount(steps: Steps) = stepsDao.update(steps)
 
     // Figures for the step counter sensor are cumulative, I therefore need to store the last figure
