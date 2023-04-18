@@ -10,6 +10,7 @@ import ke.derrick.steps.StepsApplication
 import ke.derrick.steps.data.repository.Repository
 import ke.derrick.steps.domain.CreateWorkoutReminderUseCase
 import kotlinx.coroutines.Deferred
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
@@ -21,16 +22,17 @@ class MainViewModel(private val repo: Repository,
 //        }
 //    }
 
-    fun createScheduleReminder(mContext: Context, dayOfTheWeek: Int, mHour: Int, mMinute: Int) = viewModelScope.launch {
+    fun createScheduleReminder(mContext: Context, dayOfTheWeek: Int, mHour: Int, mMinute: Int)
+        = viewModelScope.launch(Dispatchers.IO) {
         createWorkoutReminder(mContext, dayOfTheWeek, mHour, mMinute)
         repo.persistSchedule(dayOfTheWeek)
     }
 
-    fun getSevenDayWorkoutStatusAsync() = viewModelScope.async {
+    fun getSevenDayWorkoutStatusAsync() = viewModelScope.async(Dispatchers.IO) {
         repo.getSevenDayWorkoutStatus()
     }
 
-    fun getStepCountAsync(start: Long, limit: Int) = viewModelScope.async {
+    fun getStepCountAsync(start: Long, limit: Int) = viewModelScope.async(Dispatchers.IO) {
         repo.getStepCount(start, limit)
     }
 

@@ -9,11 +9,11 @@ import java.time.LocalDateTime
  * This ensures the graph is always displayed
  * @param mLength The size corresponding to the number of points to display
  */
-fun fillWithDefaultPoints(mLength: Int = 7): List<Pair<Float, String>> {
+fun fillWithDefaultPoints(mLength: Int = 7): List<Triple<Float, String, Long>> {
     return (1 .. mLength).map { n -> // default values when the DB is empty
-        Pair(0.toFloat(),
+        Triple(0.toFloat(),
             if (n > 31) convertToTwoDigitNumberString(n - 31)
-            else convertToTwoDigitNumberString(n))
+            else convertToTwoDigitNumberString(n), 0)
     }
 }
 
@@ -23,7 +23,7 @@ fun fillWithDefaultPoints(mLength: Int = 7): List<Pair<Float, String>> {
  * @param minNumPoints The minimum input size of the graph
  * @param stepsList The raw input from the DB
  */
-fun fillGapPoints(minNumPoints: Int = 7, stepsList: List<Steps?>): List<Pair<Float, String>> {
+fun fillGapPoints(minNumPoints: Int = 7, stepsList: List<Steps?>): List<Triple<Float, String, Long>> {
     var count = 1L
     val mDateTime = LocalDateTime.parse(stepsList[0]!!.createdAt)
     val mDate = LocalDate.parse(mDateTime.toString().split("T")[0])
@@ -31,17 +31,17 @@ fun fillGapPoints(minNumPoints: Int = 7, stepsList: List<Steps?>): List<Pair<Flo
     val gapSize = minNumPoints - actualNumPoints
     val gapDaysStrArr = Array(gapSize) { "" }
 
-    val graphList: ArrayList<Pair<Float, String>>
-        = List(gapSize) { Pair(0F, "00") } as ArrayList<Pair<Float, String>>
+    val graphList: ArrayList<Triple<Float, String, Long>>
+        = List(gapSize) { Triple(0F, "00", 0L) } as ArrayList<Triple<Float, String, Long>>
 
     for (i in (0 until gapSize).reversed()) {
         val mDateBefore = mDate.minusDays(count).dayOfMonth
-        graphList[i] = Pair(0F, convertToTwoDigitNumberString(mDateBefore))
+        graphList[i] = Triple(0F, convertToTwoDigitNumberString(mDateBefore), 0)
         gapDaysStrArr[minNumPoints - (actualNumPoints + 1)] = convertToTwoDigitNumberString(mDateBefore)
         count+=1
     }
     for (steps in stepsList) {
-        graphList.add(Pair(steps!!.count.toFloat(), steps.day))
+        graphList.add(Triple(steps!!.count.toFloat(), steps.day, steps.id))
     }
 
     return graphList.toList()

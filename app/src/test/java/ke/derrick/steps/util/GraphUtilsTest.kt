@@ -7,16 +7,16 @@ import org.junit.Test
 import java.time.LocalDateTime
 
 class GraphUtilsTest {
-    private lateinit var expectedResultA: List<Pair<Float, String>>
-    private lateinit var expectedResultB: List<Pair<Float, String>>
+    private lateinit var expectedResultA: List<Triple<Float, String, Long>>
+    private lateinit var expectedResultB: List<Triple<Float, String, Long>>
     private lateinit var stepsList: List<Steps>
     @Before
     fun setup() {
-        expectedResultA = listOf(Pair(0F, "01"), Pair(0F, "02"), Pair(0F, "03"), Pair(0F, "04"),
-            Pair(0F, "05"), Pair(0F, "06"), Pair(0F, "07"))
+        expectedResultA = listOf(Triple(0F, "01", 0L), Triple(0F, "02", 0L), Triple(0F, "03", 0L),
+            Triple(0F, "04", 0L), Triple(0F, "05", 0L), Triple(0F, "06", 0L), Triple(0F, "07", 0L))
 
-        expectedResultB = listOf(Pair(0F, "11"), Pair(0F, "12"), Pair(0F, "13"), Pair(0F, "14"),
-            Pair(0F, "15"), Pair(500F, "16"), Pair(500F, "17"))
+        expectedResultB = listOf(Triple(0F, "11", 0L), Triple(0F, "12", 0L), Triple(0F, "13", 0L),
+            Triple(0F, "14", 0L), Triple(0F, "15", 0L), Triple(500F, "16", 0L), Triple(500F, "17", 0L))
 
         stepsList = listOf(
             Steps(0L, 500L,

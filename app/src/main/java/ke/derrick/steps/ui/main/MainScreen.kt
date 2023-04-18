@@ -13,6 +13,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import ke.derrick.steps.CACHE_SIZE
 import ke.derrick.steps.R
 import ke.derrick.steps.WorkoutStatus
 import ke.derrick.steps.data.local.entities.Steps
@@ -54,16 +55,17 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
                 dayWithWorkoutStatus[dayOfTheWeek] = WorkoutStatus.SCHEDULED.ordinal
             }
 
-            lateinit var cachedPoints: List<Pair<Float, String>>
+            lateinit var cachedPoints: List<Triple<Float, String, Long>>
+            var startId by rememberSaveable { mutableStateOf(0L) }
 
             var stepsList by rememberSaveable { mutableStateOf<List<Steps?>>(emptyList()) }
-            LaunchedEffect(true) {
-                stepsList = viewModel.getStepCountAsync(0,50).await() ?: emptyList()
+            LaunchedEffect(startId) {
+                stepsList = viewModel.getStepCountAsync(startId, CACHE_SIZE).await() ?: emptyList()
             }
 
             cachedPoints = if (stepsList.isNotEmpty() && stepsList.size >= 7) { // values from the DB
                 stepsList.map { steps ->
-                    Pair(steps!!.count.toFloat(), steps.day)
+                    Triple(steps!!.count.toFloat(), steps.day, steps.id)
                 }
             } else if(stepsList.isEmpty()) {
                 fillWithDefaultPoints(7)
@@ -71,7 +73,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
                 fillGapPoints(7, stepsList)
             }
 
-            GraphSection(cachedPoints = cachedPoints)
+            GraphSection(cachedPoints = cachedPoints) { id -> startId = id }
 
             StatsCards()
             
@@ -83,7 +85,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
 }
 
 @Composable
-fun GraphSection(cachedPoints: List<Pair<Float, String>>) {
+fun GraphSection(cachedPoints: List<Triple<Float, String, Long>>, fireLoadingHint: (Long) -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -93,6 +95,7 @@ fun GraphSection(cachedPoints: List<Pair<Float, String>>) {
         val midpoint = 3
         val numPoints = 7
         val numY = 7
+        val loadingHintThreshold = 14
 
         var start by remember { mutableStateOf(cachedPoints.size - numPoints) }
         val points by remember(start) { mutableStateOf(cachedPoints.subList(start, start + numPoints)) }
@@ -105,7 +108,7 @@ fun GraphSection(cachedPoints: List<Pair<Float, String>>) {
             xLabels = points.map { pair -> pair.second },
             xValues = (0 until numPoints).map { x -> x + 1 },
             yValues = (0 until numY).map { y -> (y + 1) * yStep },
-            points = points.map { pair -> pair.first},
+            points = points.map { pair -> pair.first },
             midpoint = midpoint,
             verticalStep = yStep
         ) { offset ->
@@ -113,8 +116,18 @@ fun GraphSection(cachedPoints: List<Pair<Float, String>>) {
                 start = 0
             else if (start - offset > cachedPoints.size - numPoints)
                 start = cachedPoints.size - numPoints
-            else
+            else {
                 if (abs(offset) != 0) start -= (offset/abs(offset))
+                if (start <= loadingHintThreshold || start >= cachedPoints.size - loadingHintThreshold) {
+                    // TODO: Calculate the value of the next starting id and pass it to the fireLoadingHint event
+                    if (start < (start/2)) {
+                        fireLoadingHint(cachedPoints[0].third - CACHE_SIZE)
+                    } else {
+                        fireLoadingHint(cachedPoints[0].third + CACHE_SIZE)
+                    }
+                }
+            }
+
         }
     }
 }
