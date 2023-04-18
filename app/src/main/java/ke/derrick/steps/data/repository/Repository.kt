@@ -45,6 +45,7 @@ class Repository(private val workManager: WorkManager,
         return Steps(id = id, count = count, day = day, createdAt = LocalDateTime.now().toString(),
             updatedAt = LocalDateTime.now().toString())
     }
+
     fun insertStepCount(steps: Steps) = stepsDao.insert(steps)
 
 
@@ -54,6 +55,10 @@ class Repository(private val workManager: WorkManager,
 
     fun getStepCount(today: String): Steps? {
         return stepsDao.getStepCount(today)
+    }
+
+    fun getStepCount(start: Long, limit: Int): List<Steps>? {
+        return stepsDao.getStepCount(start, limit)
     }
 
     fun updateStepCount(steps: Steps) = stepsDao.update(steps)

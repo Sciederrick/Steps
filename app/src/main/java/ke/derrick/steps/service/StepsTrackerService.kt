@@ -18,8 +18,8 @@ import ke.derrick.steps.IsServiceStart
 import ke.derrick.steps.StepsApplication
 import ke.derrick.steps.data.local.entities.Steps
 import ke.derrick.steps.data.repository.Repository
-import ke.derrick.steps.utils.NotifUtils
-import ke.derrick.steps.utils.convertToTwoDigitNumberString
+import ke.derrick.steps.util.NotifUtils
+import ke.derrick.steps.util.convertToTwoDigitNumberString
 import kotlinx.coroutines.*
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow

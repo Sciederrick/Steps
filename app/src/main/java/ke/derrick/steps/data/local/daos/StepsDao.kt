@@ -17,6 +17,9 @@ interface StepsDao {
     @Query("SELECT * FROM `steps` WHERE `created_at` LIKE :today")
     fun getStepCount(today: String): Steps?
 
+    @Query("SELECT * FROM `steps` WHERE id >= :start LIMIT :limit")
+    fun getStepCount(start: Long, limit: Int): List<Steps>?
+
     @Update
     fun update(steps: Steps)
 

@@ -6,7 +6,7 @@ import android.content.Intent
 import ke.derrick.steps.EXTRA_SCHEDULE_NOTIF_TIME
 import ke.derrick.steps.SCHEDULE_NOTIF_ID
 import ke.derrick.steps.domain.SnoozeWorkoutReminderUseCase
-import ke.derrick.steps.utils.NotifUtils
+import ke.derrick.steps.util.NotifUtils
 
 class SnoozeWorkoutNotificationReceiver(): BroadcastReceiver() {
     private val snoozeWorkoutReminderUseCase = SnoozeWorkoutReminderUseCase()

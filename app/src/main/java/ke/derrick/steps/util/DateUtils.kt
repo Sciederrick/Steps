@@ -1,4 +1,4 @@
-package ke.derrick.steps.utils
+package ke.derrick.steps.util
 
 import java.time.LocalTime
 import java.util.*

@@ -4,7 +4,7 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import ke.derrick.steps.EXTRA_SCHEDULE_NOTIF_TIME
-import ke.derrick.steps.utils.NotifUtils
+import ke.derrick.steps.util.NotifUtils
 
 class CreateWorkoutNotificationReceiver: BroadcastReceiver() {
     override fun onReceive(mContext: Context?, mIntent: Intent?) {

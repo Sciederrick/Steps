@@ -15,10 +15,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ke.derrick.steps.R
 import ke.derrick.steps.WorkoutStatus
+import ke.derrick.steps.data.local.entities.Steps
 import ke.derrick.steps.ui.components.*
-import ke.derrick.steps.utils.getCurrentHourMinute
+import ke.derrick.steps.util.convertToTwoDigitNumberString
+import ke.derrick.steps.util.fillGapPoints
+import ke.derrick.steps.util.fillWithDefaultPoints
+import ke.derrick.steps.util.getCurrentHourMinute
+import java.time.LocalDate
+import java.time.LocalDateTime
 import kotlin.math.abs
-import kotlin.random.Random
 
 @SuppressLint("MutableCollectionMutableState")
 @OptIn(ExperimentalMaterial3Api::class)
@@ -49,14 +54,23 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
                 dayWithWorkoutStatus[dayOfTheWeek] = WorkoutStatus.SCHEDULED.ordinal
             }
 
-            val cachedPoints = (0..7).map { n ->
-                // Don't use random data, initialize with 0's
-//                var num = Random.nextInt(350)
-//                if (num <= 50)
-//                    num += 100
-//                 Pair(num.toFloat(), if (n > 31) n - 31 else n)
-                Pair(0.toFloat(), if (n > 31) n - 31 else n)
+            lateinit var cachedPoints: List<Pair<Float, String>>
+
+            var stepsList by rememberSaveable { mutableStateOf<List<Steps?>>(emptyList()) }
+            LaunchedEffect(true) {
+                stepsList = viewModel.getStepCountAsync(0,50).await() ?: emptyList()
             }
+
+            cachedPoints = if (stepsList.isNotEmpty() && stepsList.size >= 7) { // values from the DB
+                stepsList.map { steps ->
+                    Pair(steps!!.count.toFloat(), steps.day)
+                }
+            } else if(stepsList.isEmpty()) {
+                fillWithDefaultPoints(7)
+            } else {
+                fillGapPoints(7, stepsList)
+            }
+
             GraphSection(cachedPoints = cachedPoints)
 
             StatsCards()
@@ -69,7 +83,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
 }
 
 @Composable
-fun GraphSection(cachedPoints: List<Pair<Float, Int>>) {
+fun GraphSection(cachedPoints: List<Pair<Float, String>>) {
     Column(
         modifier = Modifier
             .fillMaxWidth()

@@ -7,7 +7,7 @@ import androidx.datastore.preferences.preferencesDataStore
 import androidx.work.WorkManager
 import ke.derrick.steps.data.local.database.AppDatabase
 import ke.derrick.steps.data.repository.Repository
-import ke.derrick.steps.utils.NotifUtils
+import ke.derrick.steps.util.NotifUtils
 
 class StepsApplication: Application() {
     private val dataStore: DataStore<Preferences> by preferencesDataStore(name = "steps")

@@ -4,7 +4,7 @@ import android.content.Context
 import androidx.work.CoroutineWorker
 import androidx.work.WorkerParameters
 import ke.derrick.steps.StepsApplication
-import ke.derrick.steps.utils.convertToTwoDigitNumberString
+import ke.derrick.steps.util.convertToTwoDigitNumberString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import java.time.LocalDate

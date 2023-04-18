@@ -2,7 +2,6 @@ package ke.derrick.steps.ui.components
 
 import android.graphics.Paint
 import android.graphics.PointF
-import android.util.Log
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
@@ -14,21 +13,16 @@ import androidx.compose.ui.Alignment.Companion.Center
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.*
 import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.colorResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
 import ke.derrick.steps.R
 import ke.derrick.steps.ui.theme.Blue800
-import ke.derrick.steps.utils.convertToTwoDigitNumberString
-import kotlin.math.abs
 import kotlin.math.round
 
 /**
@@ -37,7 +31,7 @@ import kotlin.math.round
 @Composable
 fun StepsGraph(
     modifier : Modifier,
-    xLabels: List<Int>,
+    xLabels: List<String>,
     xValues: List<Int>,
     yValues: List<Int>,
     points: List<Float>,
@@ -107,7 +101,7 @@ fun StepsGraph(
             /** placing x axis labels **/
             for (i in xValues.indices) {
                 drawContext.canvas.nativeCanvas.drawText(
-                    convertToTwoDigitNumberString(xLabels[i]),
+                    xLabels[i],
                     xAxisSpace * i,
                     size.height - 30,
                     if (i == midpoint) textPaintOnFocus else textPaint

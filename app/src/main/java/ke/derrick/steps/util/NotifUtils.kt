@@ -1,4 +1,4 @@
-package ke.derrick.steps.utils
+package ke.derrick.steps.util
 
 import android.app.Notification
 import android.app.NotificationChannel

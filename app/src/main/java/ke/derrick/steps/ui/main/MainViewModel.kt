@@ -15,27 +15,33 @@ import kotlinx.coroutines.launch
 
 class MainViewModel(private val repo: Repository,
                     private val createWorkoutReminder: CreateWorkoutReminderUseCase): ViewModel() {
-    init {
-        viewModelScope.launch {
-            getInitialStepCountAsync()
-        }
-    }
+//    init {
+//        viewModelScope.launch {
+//            getInitialStepCountAsync()
+//        }
+//    }
 
     fun createScheduleReminder(mContext: Context, dayOfTheWeek: Int, mHour: Int, mMinute: Int) = viewModelScope.launch {
         createWorkoutReminder(mContext, dayOfTheWeek, mHour, mMinute)
         repo.persistSchedule(dayOfTheWeek)
     }
 
-    fun getSevenDayWorkoutStatusAsync(): Deferred<Array<Int>> = viewModelScope.async {
+    fun getSevenDayWorkoutStatusAsync() = viewModelScope.async {
         repo.getSevenDayWorkoutStatus()
     }
 
-    private suspend fun getInitialStepCountAsync() {
-        val initialStepCount = viewModelScope.async {
-            repo.getInitialStepCount()
-        }.await()
-        Log.d(TAG, "initial step count: $initialStepCount")
+    fun getStepCountAsync(start: Long, limit: Int) = viewModelScope.async {
+        repo.getStepCount(start, limit)
     }
+
+
+
+//    private suspend fun getInitialStepCountAsync() {
+//        val initialStepCount = viewModelScope.async {
+//            repo.getInitialStepCount()
+//        }.await()
+//        Log.d(TAG, "initial step count: $initialStepCount")
+//    }
 
     companion object {
         const val TAG = "MainViewModel"

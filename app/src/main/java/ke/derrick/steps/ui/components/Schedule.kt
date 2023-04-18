@@ -23,7 +23,7 @@ import ke.derrick.steps.WorkoutStatus
 import ke.derrick.steps.ui.theme.Gray900
 import ke.derrick.steps.ui.theme.RoundedShapes
 import ke.derrick.steps.ui.theme.White
-import ke.derrick.steps.utils.getDayOfTheWeek
+import ke.derrick.steps.util.getDayOfTheWeek
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
