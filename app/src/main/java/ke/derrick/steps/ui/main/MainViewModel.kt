@@ -1,26 +1,32 @@
 package ke.derrick.steps.ui.main
 
 import android.content.Context
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
 import ke.derrick.steps.StepsApplication
+import ke.derrick.steps.data.local.entities.Steps
 import ke.derrick.steps.data.repository.Repository
 import ke.derrick.steps.domain.CreateWorkoutReminderUseCase
-import kotlinx.coroutines.Deferred
+import ke.derrick.steps.util.convertToTwoDigitNumberString
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.LocalDateTime
+import kotlin.random.Random
 
 class MainViewModel(private val repo: Repository,
                     private val createWorkoutReminder: CreateWorkoutReminderUseCase): ViewModel() {
-//    init {
+    val fakeListOfSteps: ArrayList<Steps> = List(350) { Steps(0, 0L, "00", "", "") } as ArrayList<Steps>
+    init {
 //        viewModelScope.launch {
 //            getInitialStepCountAsync()
 //        }
-//    }
+        setStepCountAsyncFake()
+    }
 
     fun createScheduleReminder(mContext: Context, dayOfTheWeek: Int, mHour: Int, mMinute: Int)
         = viewModelScope.launch(Dispatchers.IO) {
@@ -34,6 +40,23 @@ class MainViewModel(private val repo: Repository,
 
     fun getStepCountAsync(start: Long, limit: Int) = viewModelScope.async(Dispatchers.IO) {
         repo.getStepCount(start, limit)
+    }
+
+    private fun setStepCountAsyncFake() {
+        val mNow = LocalDateTime.now()
+        val mToday = LocalDate.now()
+        for (i in 0 until 350) {
+            fakeListOfSteps[i] =
+                Steps(i.toLong(), Random.nextLong(0, 10000), convertToTwoDigitNumberString(mToday.plusDays(
+                    i.toLong()
+                ).dayOfMonth),
+                    mNow.plusDays(i.toLong()).toString(), mNow.plusDays(i.toLong()).toString())
+        }
+    }
+
+    fun getStepCountFakeAsync(start: Long, limit: Int) = viewModelScope.async(Dispatchers.IO) {
+        delay(2000L)
+        fakeListOfSteps.subList(start.toInt(), (start + limit).toInt())
     }
 
 

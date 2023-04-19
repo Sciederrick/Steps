@@ -2,6 +2,7 @@ package ke.derrick.steps.ui.main
 
 import android.annotation.SuppressLint
 import android.app.TimePickerDialog
+import android.util.Log
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -22,6 +23,7 @@ import ke.derrick.steps.util.convertToTwoDigitNumberString
 import ke.derrick.steps.util.fillGapPoints
 import ke.derrick.steps.util.fillWithDefaultPoints
 import ke.derrick.steps.util.getCurrentHourMinute
+import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
 import kotlin.math.abs
@@ -55,25 +57,33 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
                 dayWithWorkoutStatus[dayOfTheWeek] = WorkoutStatus.SCHEDULED.ordinal
             }
 
-            lateinit var cachedPoints: List<Triple<Float, String, Long>>
+            var cachedPoints by rememberSaveable { mutableStateOf(emptyList<Triple<Float, String, Long>>()) }
             var startId by rememberSaveable { mutableStateOf(0L) }
 
             var stepsList by rememberSaveable { mutableStateOf<List<Steps?>>(emptyList()) }
             LaunchedEffect(startId) {
-                stepsList = viewModel.getStepCountAsync(startId, CACHE_SIZE).await() ?: emptyList()
-            }
+//                stepsList = viewModel.getStepCountAsync(startId, CACHE_SIZE).await() ?: emptyList()
+                stepsList = viewModel.getStepCountFakeAsync(startId, CACHE_SIZE).await()
+                Log.d("MainScreen", "steps list: $stepsList")
 
-            cachedPoints = if (stepsList.isNotEmpty() && stepsList.size >= 7) { // values from the DB
-                stepsList.map { steps ->
-                    Triple(steps!!.count.toFloat(), steps.day, steps.id)
+                cachedPoints = if (stepsList.isNotEmpty() && stepsList.size >= 7) { // values from the DB
+                    stepsList.map { steps ->
+                        Triple(steps!!.count.toFloat(), steps.day, steps.id)
+                    }
+                } else if(stepsList.isEmpty()) {
+                    fillWithDefaultPoints(7)
+                } else {
+                    fillGapPoints(7, stepsList)
                 }
-            } else if(stepsList.isEmpty()) {
-                fillWithDefaultPoints(7)
-            } else {
-                fillGapPoints(7, stepsList)
+
             }
 
-            GraphSection(cachedPoints = cachedPoints) { id -> startId = id }
+
+            Log.d("MainScreen", "cached points: $cachedPoints")
+            if (cachedPoints.size >= 7) {
+                GraphSection(cachedPoints = cachedPoints) { id -> startId = id }
+            }
+
 
             StatsCards()
             
@@ -119,7 +129,8 @@ fun GraphSection(cachedPoints: List<Triple<Float, String, Long>>, fireLoadingHin
             else {
                 if (abs(offset) != 0) start -= (offset/abs(offset))
                 if (start <= loadingHintThreshold || start >= cachedPoints.size - loadingHintThreshold) {
-                    // TODO: Calculate the value of the next starting id and pass it to the fireLoadingHint event
+                    // Calculate the value of the next starting id and pass it to the fireLoadingHint event
+                    // TODO: Test pagination
                     if (start < (start/2)) {
                         fireLoadingHint(cachedPoints[0].third - CACHE_SIZE)
                     } else {
