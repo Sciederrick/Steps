@@ -20,6 +20,9 @@ interface StepsDao {
     @Query("SELECT * FROM `steps` WHERE id >= :start LIMIT :limit")
     fun getStepCount(start: Long, limit: Int): List<Steps>?
 
+    @Query("SELECT MAX(`count`) FROM `steps`")
+    fun getMaxStepCount(): Long?
+
     @Update
     fun update(steps: Steps)
 

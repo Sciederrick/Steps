@@ -16,16 +16,21 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalDateTime
+import kotlin.properties.Delegates
 import kotlin.random.Random
 
 class MainViewModel(private val repo: Repository,
                     private val createWorkoutReminder: CreateWorkoutReminderUseCase): ViewModel() {
-    val fakeListOfSteps: ArrayList<Steps> = List(350) { Steps(0, 0L, "00", "", "") } as ArrayList<Steps>
+    private val fakeListOfSteps: ArrayList<Steps>
+        = List(350) { Steps(0, 0L, "00", "", "") }
+            as ArrayList<Steps>
+    private var fakeMaxStepCount by Delegates.notNull<Long>()
+
     init {
 //        viewModelScope.launch {
 //            getInitialStepCountAsync()
 //        }
-        setStepCountAsyncFake()
+        initStepCountAsyncFake()
     }
 
     fun createScheduleReminder(mContext: Context, dayOfTheWeek: Int, mHour: Int, mMinute: Int)
@@ -42,21 +47,40 @@ class MainViewModel(private val repo: Repository,
         repo.getStepCount(start, limit)
     }
 
-    private fun setStepCountAsyncFake() {
+//    fun getMaxStepCountAsync() = viewModelScope.async(Dispatchers.IO) {
+//        repo.getMaxStepCount()
+//    }
+
+    fun getMaxStepCountAsync() = viewModelScope.async(Dispatchers.IO) {
+        delay(2000)
+        repo.getMaxStepCount()
+    }
+
+    private fun initStepCountAsyncFake() {
         val mNow = LocalDateTime.now()
         val mToday = LocalDate.now()
+        var stepCount: Long
+        var maxStepCount = 0L
         for (i in 0 until 350) {
+            stepCount = Random.nextLong(0, 10_000)
+            if (stepCount > maxStepCount) maxStepCount = stepCount
             fakeListOfSteps[i] =
-                Steps(i.toLong(), Random.nextLong(0, 10000), convertToTwoDigitNumberString(mToday.plusDays(
+                Steps(i.toLong(), stepCount, convertToTwoDigitNumberString(mToday.plusDays(
                     i.toLong()
                 ).dayOfMonth),
                     mNow.plusDays(i.toLong()).toString(), mNow.plusDays(i.toLong()).toString())
         }
+        fakeMaxStepCount = maxStepCount
     }
 
     fun getStepCountFakeAsync(start: Long, limit: Int) = viewModelScope.async(Dispatchers.IO) {
         delay(2000L)
         fakeListOfSteps.subList(start.toInt(), (start + limit).toInt())
+    }
+
+    fun getFakeMaxStepCountAsync() = viewModelScope.async(Dispatchers.IO) {
+        delay(2000L)
+        fakeMaxStepCount
     }
 
 

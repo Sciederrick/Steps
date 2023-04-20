@@ -9,6 +9,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.dimensionResource
@@ -19,13 +20,9 @@ import ke.derrick.steps.R
 import ke.derrick.steps.WorkoutStatus
 import ke.derrick.steps.data.local.entities.Steps
 import ke.derrick.steps.ui.components.*
-import ke.derrick.steps.util.convertToTwoDigitNumberString
 import ke.derrick.steps.util.fillGapPoints
 import ke.derrick.steps.util.fillWithDefaultPoints
 import ke.derrick.steps.util.getCurrentHourMinute
-import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.LocalDateTime
 import kotlin.math.abs
 
 @SuppressLint("MutableCollectionMutableState")
@@ -59,12 +56,13 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
 
             var cachedPoints by rememberSaveable { mutableStateOf(emptyList<Triple<Float, String, Long>>()) }
             var startId by rememberSaveable { mutableStateOf(0L) }
+            var maxStepCount by rememberSaveable { mutableStateOf(1L) }
 
             var stepsList by rememberSaveable { mutableStateOf<List<Steps?>>(emptyList()) }
             LaunchedEffect(startId) {
 //                stepsList = viewModel.getStepCountAsync(startId, CACHE_SIZE).await() ?: emptyList()
                 stepsList = viewModel.getStepCountFakeAsync(startId, CACHE_SIZE).await()
-                Log.d("MainScreen", "steps list: $stepsList")
+                maxStepCount = viewModel.getFakeMaxStepCountAsync().await() ?: 1L
 
                 cachedPoints = if (stepsList.isNotEmpty() && stepsList.size >= 7) { // values from the DB
                     stepsList.map { steps ->
@@ -78,12 +76,18 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
 
             }
 
-
-            Log.d("MainScreen", "cached points: $cachedPoints")
             if (cachedPoints.size >= 7) {
-                GraphSection(cachedPoints = cachedPoints) { id -> startId = id }
+                GraphSection(
+                    cachedPoints = cachedPoints, maxStepCount = maxStepCount) { id -> startId = id }
+            } else {
+                Column(
+                    modifier = Modifier.fillMaxWidth().height(440.dp),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    LoadingAnimation()
+                }
             }
-
 
             StatsCards()
             
@@ -95,16 +99,19 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
 }
 
 @Composable
-fun GraphSection(cachedPoints: List<Triple<Float, String, Long>>, fireLoadingHint: (Long) -> Unit = {}) {
+fun GraphSection(cachedPoints: List<Triple<Float, String, Long>>,
+                 maxStepCount: Long, fireLoadingHint: (Long) -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .padding(vertical = dimensionResource(id = R.dimen.spacing_md))
     ) {
         val yStep = 50
+//        val yStep = 10
         val midpoint = 3
         val numPoints = 7
         val numY = 7
+//        val numY = (maxStepCount/yStep).toInt() + 1
         val loadingHintThreshold = 14
 
         var start by remember { mutableStateOf(cachedPoints.size - numPoints) }
@@ -120,7 +127,8 @@ fun GraphSection(cachedPoints: List<Triple<Float, String, Long>>, fireLoadingHin
             yValues = (0 until numY).map { y -> (y + 1) * yStep },
             points = points.map { pair -> pair.first },
             midpoint = midpoint,
-            verticalStep = yStep
+            verticalStep = yStep,
+            maxYValue = maxStepCount
         ) { offset ->
             if (start - offset < 0)
                 start = 0

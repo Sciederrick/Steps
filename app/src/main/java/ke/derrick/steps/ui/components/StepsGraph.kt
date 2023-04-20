@@ -34,6 +34,7 @@ fun StepsGraph(
     xLabels: List<String>,
     xValues: List<Int>,
     yValues: List<Int>,
+    maxYValue: Long,
     points: List<Float>,
     midpoint: Int = 3,
     verticalStep: Int,
@@ -107,11 +108,11 @@ fun StepsGraph(
                     if (i == midpoint) textPaintOnFocus else textPaint
                 )
             }
-
             /** placing our x axis points */
             for (i in points.indices) {
                 val x1 = xAxisSpace * (xValues[i] - 1)
-                val y1 = size.height - (yAxisSpace * (points[i]/verticalStep.toFloat()))
+//                val y1 = size.height - (yAxisSpace * (points[i]/verticalStep.toFloat()))
+                val y1 = size.height - (size.height * (points[i]/maxYValue))
                 coordinates.add(PointF(x1,y1))
             }
             /** calculating the connection points */
