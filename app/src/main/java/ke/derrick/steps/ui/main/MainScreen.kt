@@ -62,7 +62,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
             LaunchedEffect(startId) {
 //                stepsList = viewModel.getStepCountAsync(startId, CACHE_SIZE).await() ?: emptyList()
                 stepsList = viewModel.getStepCountFakeAsync(startId, CACHE_SIZE).await()
-                maxStepCount = viewModel.getFakeMaxStepCountAsync().await() ?: 1L
+                maxStepCount = viewModel.getFakeMaxStepCountAsync().await()
 
                 cachedPoints = if (stepsList.isNotEmpty() && stepsList.size >= 7) { // values from the DB
                     stepsList.map { steps ->
@@ -81,7 +81,7 @@ fun MainScreen(viewModel: MainViewModel = viewModel(factory = MainViewModel.prov
                     cachedPoints = cachedPoints, maxStepCount = maxStepCount) { id -> startId = id }
             } else {
                 Column(
-                    modifier = Modifier.fillMaxWidth().height(440.dp),
+                    modifier = Modifier.fillMaxWidth().height(490.dp),
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally
                 ) {
@@ -121,7 +121,7 @@ fun GraphSection(cachedPoints: List<Triple<Float, String, Long>>,
         StepsGraph(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(350.dp),
+                .height(400.dp),
             xLabels = points.map { pair -> pair.second },
             xValues = (0 until numPoints).map { x -> x + 1 },
             yValues = (0 until numY).map { y -> (y + 1) * yStep },
@@ -140,8 +140,10 @@ fun GraphSection(cachedPoints: List<Triple<Float, String, Long>>,
                     // Calculate the value of the next starting id and pass it to the fireLoadingHint event
                     // TODO: Test pagination
                     if (start < (start/2)) {
+                        Log.d("MainScreen", "fire loading hint for prev")
                         fireLoadingHint(cachedPoints[0].third - CACHE_SIZE)
                     } else {
+                        Log.d("MainScreen", "fire loading hint for after")
                         fireLoadingHint(cachedPoints[0].third + CACHE_SIZE)
                     }
                 }

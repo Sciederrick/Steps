@@ -21,12 +21,14 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.core.content.ContextCompat
+import ke.derrick.steps.GRAPH_Y_PADDING
 import ke.derrick.steps.R
 import ke.derrick.steps.ui.theme.Blue800
 import kotlin.math.round
 
 /**
  * Created by Saurabh
+ * Modified by Derrick
  */
 @Composable
 fun StepsGraph(
@@ -104,7 +106,8 @@ fun StepsGraph(
                 drawContext.canvas.nativeCanvas.drawText(
                     xLabels[i],
                     xAxisSpace * i,
-                    size.height - 30,
+//                    size.height - 30,
+                    size.height - 5,
                     if (i == midpoint) textPaintOnFocus else textPaint
                 )
             }
@@ -112,7 +115,7 @@ fun StepsGraph(
             for (i in points.indices) {
                 val x1 = xAxisSpace * (xValues[i] - 1)
 //                val y1 = size.height - (yAxisSpace * (points[i]/verticalStep.toFloat()))
-                val y1 = size.height - (size.height * (points[i]/maxYValue))
+                val y1 = size.height - (size.height * (points[i]/(maxYValue + GRAPH_Y_PADDING))) - GRAPH_Y_PADDING
                 coordinates.add(PointF(x1,y1))
             }
             /** calculating the connection points */

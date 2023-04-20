@@ -29,3 +29,4 @@ const val BROADCAST_REQUEST_CODE = 12345
 const val STARTING_STEP_COUNT_KEY = "ke.derrick.steps.STARTING_STEP_COUNT"
 const val ADD_DEFAULT_STEP_COUNT_WORK_NAME = "addDefaultStepCount"
 const val CACHE_SIZE = 50
+const val GRAPH_Y_PADDING = 50
